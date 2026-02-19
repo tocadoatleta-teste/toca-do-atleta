@@ -2,103 +2,159 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>PDV - Toca do Atleta</title>
+    <title>PDV + Relatório - Toca do Atleta</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; height: 100vh; background: #f0f2f5; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; background: #f0f2f5; }
+        .main-container { display: flex; flex: 1; overflow: hidden; }
         .produtos { flex: 2; padding: 20px; overflow-y: auto; border-right: 2px solid #ddd; }
-        .sacola { flex: 1; padding: 20px; background: white; display: flex; flex-direction: column; }
-        h2 { color: #d32f2f; margin-top: 0; }
-        input[type="text"] { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 5px; }
-        table { width: 100%; border-collapse: collapse; background: white; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #d32f2f; color: white; }
-        .btn-add { background: #2e7d32; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; }
-        .btn-add:hover { background: #1b5e20; }
+        .sacola { flex: 1; padding: 20px; background: white; display: flex; flex-direction: column; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
+        .historico { padding: 20px; background: #fff; border-top: 5px solid #d32f2f; max-height: 200px; overflow-y: auto; }
         
-        /* Estilo da Sacola */
-        .item-sacola { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ccc; font-size: 14px; }
-        .total-box { margin-top: auto; padding-top: 20px; border-top: 3px solid #d32f2f; }
-        .linha-total { display: flex; justify-content: space-between; font-size: 18px; font-weight: bold; margin-bottom: 10px; }
-        .desconto-input { width: 80px; padding: 5px; margin-left: 10px; }
-        .btn-limpar { background: #666; color: white; border: none; width: 100%; padding: 10px; cursor: pointer; border-radius: 5px; }
-        .val-final { color: #d32f2f; font-size: 24px; }
+        h2, h3 { color: #d32f2f; margin-top: 0; }
+        input[type="text"], input[type="number"] { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; }
+        
+        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
+        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        th { background: #d32f2f; color: white; position: sticky; top: 0; }
+        
+        .btn-add { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .btn-limpar-hist { background: #666; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; float: right; }
+        
+        .item-sacola { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #ccc; }
+        .total-box { border-top: 2px solid #eee; padding-top: 15px; }
+        .val-final { color: #2e7d32; font-size: 28px; font-weight: bold; }
     </style>
 </head>
 <body>
 
-<div class="produtos">
-    <h2>Toca do Atleta - Produtos</h2>
-    <input type="text" id="busca" onkeyup="filtrar()" placeholder="Buscar produto...">
-    <table id="tabela">
-        <thead>
-            <tr>
-                <th>Produto</th>
-                <th>Preço</th>
-                <th>Ação</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr><td>Whey Protein Max 900g</td><td>149.90</td><td><button class="btn-add" onclick="add('Whey Max', 149.90)">+</button></td></tr>
-            <tr><td>Creatina Pura 300g</td><td>89.00</td><td><button class="btn-add" onclick="add('Creatina 300g', 89.00)">+</button></td></tr>
-            <tr><td>Camisa Dry Fit (M)</td><td>55.00</td><td><button class="btn-add" onclick="add('Camisa Dry Fit', 55.00)">+</button></td></tr>
-            <tr><td>Meia Cano Curto</td><td>29.90</td><td><button class="btn-add" onclick="add('Meia', 29.90)">+</button></td></tr>
-        </tbody>
-    </table>
-</div>
+<div class="main-container">
+    <div class="produtos">
+        <h2>Toca do Atleta - Catálogo</h2>
+        <input type="text" id="busca" onkeyup="filtrar()" placeholder="🔎 Buscar produto..." style="width: 95%;">
+        <table id="tabela">
+            <thead>
+                <tr>
+                    <th>Produto</th>
+                    <th>Preço (R$)</th>
+                    <th>Ação</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr><td>Whey Protein Max 900g</td><td>149.90</td><td><button class="btn-add" onclick="add('Whey Max', 149.90)">+</button></td></tr>
+                <tr><td>Creatina Pura 300g</td><td>89.00</td><td><button class="btn-add" onclick="add('Creatina 300g', 89.00)">+</button></td></tr>
+                <tr><td>Camisa Dry Fit (M)</td><td>55.00</td><td><button class="btn-add" onclick="add('Camisa Dry Fit', 55.00)">+</button></td></tr>
+                <tr><td>Meia Cano Curto</td><td>29.90</td><td><button class="btn-add" onclick="add('Meia', 29.90)">+</button></td></tr>
+                <tr><td>Coqueteleira</td><td>25.00</td><td><button class="btn-add" onclick="add('Coqueteleira', 25.00)">+</button></td></tr>
+            </tbody>
+        </table>
+    </div>
 
-<div class="sacola">
-    <h2>Sacola de Venda</h2>
-    <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto;">
+    <div class="sacola">
+        <h2>Sacola Atual</h2>
+        <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto;"></div>
+        
+        <div class="total-box">
+            <div>Subtotal: <span id="subtotal">R$ 0,00</span></div>
+            <div style="margin: 10px 0;">
+                Desconto (%): <input type="number" id="desc-porcent" value="0" style="width: 50px;" oninput="calcularTudo()">
+            </div>
+            <div class="val-final" id="total-final">R$ 0,00</div>
+            <button class="btn-finalizar" onclick="finalizarVenda()" style="width: 100%;">FECHAR VENDA</button>
+            <button onclick="limparSacola()" style="background:none; border:none; color:grey; cursor:pointer; width:100%; margin-top:5px;">Esvaziar sacola</button>
         </div>
-
-    <div class="total-box">
-        <div class="linha-total">Subtotal: <span id="subtotal">R$ 0,00</span></div>
-        <div class="linha-total" style="font-size: 14px; color: #666;">
-            Desconto (%): <input type="number" id="desc-porcent" class="desconto-input" value="0" oninput="calcularTudo()">
-        </div>
-        <div class="linha-total">Total: <span id="total-final" class="val-final">R$ 0,00</span></div>
-        <button class="btn-limpar" onclick="limpar()">Limpar Sacola</button>
     </div>
 </div>
 
+<div class="historico">
+    <button class="btn-limpar-hist" onclick="limparHistorico()">Zerar Relatório do Dia</button>
+    <h3>📊 Vendas Realizadas</h3>
+    <table id="tabela-historico">
+        <thead>
+            <tr>
+                <th>Hora</th>
+                <th>Itens</th>
+                <th>Total (c/ desc)</th>
+            </tr>
+        </thead>
+        <tbody id="corpo-historico"></tbody>
+    </table>
+</div>
+
 <script>
-    let itensSacola = [];
+    let sacola = [];
+    let historicoVendas = JSON.parse(localStorage.getItem('vendas_toca')) || [];
+
+    // Iniciar carregando o histórico salvo
+    window.onload = renderHistorico;
 
     function filtrar() {
         let input = document.getElementById("busca").value.toLowerCase();
-        let rows = document.getElementById("tabela").getElementsByTagName("tr");
-        for (let i = 1; i < rows.length; i++) {
-            rows[i].style.display = rows[i].innerText.toLowerCase().includes(input) ? "" : "none";
-        }
+        let rows = document.querySelectorAll("#tabela tbody tr");
+        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
     }
 
     function add(nome, preco) {
-        itensSacola.push({nome, preco});
+        sacola.push({nome, preco});
         renderSacola();
     }
 
     function renderSacola() {
         const lista = document.getElementById("lista-sacola");
-        lista.innerHTML = "";
-        itensSacola.forEach((item, index) => {
-            lista.innerHTML += `<div class="item-sacola"><span>${item.nome}</span> <b>R$ ${item.preco.toFixed(2)}</b></div>`;
-        });
+        lista.innerHTML = sacola.map(i => `<div class="item-sacola"><span>${i.nome}</span> <b>R$ ${i.preco.toFixed(2)}</b></div>`).join('');
         calcularTudo();
     }
 
     function calcularTudo() {
-        let subtotal = itensSacola.reduce((acc, item) => acc + item.preco, 0);
-        let desc = document.getElementById("desc-porcent").value;
-        let total = subtotal - (subtotal * (desc / 100));
-
-        document.getElementById("subtotal").innerText = `R$ ${subtotal.toFixed(2)}`;
+        let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
+        let desc = document.getElementById("desc-porcent").value || 0;
+        let total = sub - (sub * (desc / 100));
+        document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
         document.getElementById("total-final").innerText = `R$ ${total.toFixed(2)}`;
+        return total;
     }
 
-    function limpar() {
-        itensSacola = [];
+    function finalizarVenda() {
+        if(sacola.length === 0) return alert("A sacola está vazia!");
+        
+        let totalVenda = calcularTudo();
+        let nomesItens = sacola.map(i => i.nome).join(', ');
+        let hora = new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        const novaVenda = { hora, itens: nomesItens, total: totalVenda };
+        historicoVendas.push(novaVenda);
+        
+        // Salva no navegador
+        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
+        
+        limparSacola();
+        renderHistorico();
+        alert("Venda registrada com sucesso!");
+    }
+
+    function renderHistorico() {
+        const corpo = document.getElementById("corpo-historico");
+        corpo.innerHTML = historicoVendas.map(v => `
+            <tr>
+                <td>${v.hora}</td>
+                <td style="font-size: 12px;">${v.itens}</td>
+                <td><b>R$ ${v.total.toFixed(2)}</b></td>
+            </tr>
+        `).reverse().join(''); // Mostra as mais recentes primeiro
+    }
+
+    function limparSacola() {
+        sacola = [];
         document.getElementById("desc-porcent").value = 0;
         renderSacola();
+    }
+
+    function limparHistorico() {
+        if(confirm("Deseja zerar todas as vendas do relatório?")) {
+            historicoVendas = [];
+            localStorage.removeItem('vendas_toca');
+            renderHistorico();
+        }
     }
 </script>
 
