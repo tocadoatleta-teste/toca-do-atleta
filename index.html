@@ -98,7 +98,7 @@
     }
 
     function add(nome, preco) {
-        sacola.push({nome, preco});
+        sacola.push({nome: nome, preco: parseFloat(preco)});
         renderSacola();
     }
 
@@ -121,8 +121,8 @@
 
     function calcularTudo() {
         let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
-        let descP = document.getElementById("desc-porcent").value || 0;
-        let descR = document.getElementById("desc-reais").value || 0;
+        let descP = parseFloat(document.getElementById("desc-porcent").value) || 0;
+        let descR = parseFloat(document.getElementById("desc-reais").value) || 0;
         let total = (sub - (sub * (descP / 100))) - descR;
         if (total < 0) total = 0;
         document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
@@ -134,7 +134,6 @@
         if(sacola.length === 0) return alert("Sacola vazia!");
         const valores = calcularTudo();
         
-        // Salvamos os itens detalhados para o recibo poder acessá-los depois
         let itensRecibo = sacola.map(i => ({nome: i.nome, preco: i.preco}));
         let metodo = document.getElementById("metodo-pagamento").value;
         let agora = new Date();
@@ -157,40 +156,51 @@
         document.getElementById("desc-reais").value = 0;
         renderSacola();
         renderHistorico();
-        alert("Venda finalizada!");
+        alert("Venda salva com sucesso!");
     }
 
     function renderHistorico() {
         const corpo = document.getElementById("corpo-historico");
         let somaTotal = 0;
         
-        corpo.innerHTML = historicoVendas.map((v, index) => {
+        // Invertemos para mostrar as mais recentes primeiro
+        const listaInvertida = [...historicoVendas].reverse();
+
+        corpo.innerHTML = listaInvertida.map((v) => {
             somaTotal += v.total;
-            let listaItens = v.itens.map(i => i.nome).join(' | ');
+            let listaItens = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
+            
+            // Pegamos o index real da venda no array original
+            let indexOriginal = historicoVendas.indexOf(v);
+
             return `
                 <tr>
                     <td style="font-size:11px">${v.dataHora}</td>
                     <td style="font-size:11px">${listaItens}</td>
                     <td><span class="tag-pagamento">${v.metodo}</span></td>
                     <td><b>R$ ${v.total.toFixed(2)}</b></td>
-                    <td><button class="btn-recibo-hist" onclick="gerarRecibo(${index})">Recibo</button></td>
+                    <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
                 </tr>`;
-        }).reverse().join('');
+        }).join('');
         
         document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
     }
 
     function gerarRecibo(index) {
         const venda = historicoVendas[index];
-        const agora = new Date().toLocaleString('pt-BR');
         
+        // Verificação de segurança se os itens existem
+        if (!venda || !venda.itens || !Array.isArray(venda.itens)) {
+            return alert("Esta é uma venda antiga e não pode gerar recibo detalhado. Por favor, zere o histórico.");
+        }
+
         let itensHTML = venda.itens.map(i => `
             <tr>
                 <td style="font-size:12px">${i.nome}</td>
                 <td style="text-align:right">R$ ${i.preco.toFixed(2)}</td>
             </tr>`).join('');
 
-        const janelaRecibo = window.open('', '', 'width=400,height=600');
+        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
         janelaRecibo.document.write(`
             <html>
             <head>
@@ -203,7 +213,7 @@
                     .total { font-weight: bold; font-size: 16px; }
                 </style>
             </head>
-            <body onload="window.print();window.close();">
+            <body>
                 <div class="center">
                     <h2 style="margin:0">TOCA DO ATLETA</h2>
                     <p style="font-size:11px">Icaraí - Niterói, RJ<br>${venda.dataHora}</p>
@@ -214,14 +224,17 @@
                     <tbody>${itensHTML}</tbody>
                 </table>
                 <div class="separador"></div>
-                <p style="font-size:12px">Subtotal: R$ ${parseFloat(venda.subtotal).toFixed(2)}</p>
-                <p style="font-size:12px">Desc: ${venda.descP}% | R$ ${parseFloat(venda.descR).toFixed(2)}</p>
+                <p style="font-size:12px">Subtotal: R$ ${parseFloat(venda.subtotal || 0).toFixed(2)}</p>
+                <p style="font-size:12px">Desc: ${venda.descP}% | R$ ${parseFloat(venda.descR || 0).toFixed(2)}</p>
                 <p class="total">TOTAL: R$ ${venda.total.toFixed(2)}</p>
                 <div class="separador"></div>
                 <p style="font-size:12px">Pagamento: ${venda.metodo}</p>
                 <div class="center" style="margin-top:20px">
                     <p>Obrigado pela preferência!</p>
                 </div>
+                <script>
+                    window.onload = function() { window.print(); setTimeout(window.close, 500); }
+                <\/script>
             </body>
             </html>
         `);
@@ -232,7 +245,7 @@
         if(historicoVendas.length === 0) return alert("Sem vendas!");
         let csv = "\ufeffData/Hora;Itens;Pagamento;Total\n";
         historicoVendas.forEach(v => { 
-            let listaItens = v.itens.map(i => i.nome).join(' | ');
+            let listaItens = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
             csv += `${v.dataHora};${listaItens};${v.metodo};${v.total.toFixed(2).replace('.', ',')}\n`; 
         });
         let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
