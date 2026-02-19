@@ -2,41 +2,107 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDV Pro - Toca do Atleta</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; margin: 0; display: flex; flex-direction: column; height: 100vh; background: #f0f2f5; }
-        .main-container { display: flex; flex: 1; overflow: hidden; }
-        .produtos { flex: 2; padding: 20px; overflow-y: auto; border-right: 2px solid #ddd; }
-        .sacola { flex: 1; padding: 20px; background: white; display: flex; flex-direction: column; box-shadow: -2px 0 5px rgba(0,0,0,0.1); }
-        .historico { padding: 20px; background: #fff; border-top: 5px solid #d32f2f; max-height: 350px; overflow-y: auto; }
-        h2, h3 { color: #d32f2f; margin-top: 0; }
-        input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
-        th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
+        /* Ajuste Base para Zoom */
+        * { box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column; 
+            height: 100vh; 
+            background: #f0f2f5; 
+            overflow: hidden; /* Evita barra de rolagem na página inteira */
+        }
+
+        /* Contêiner Principal */
+        .main-container { 
+            display: flex; 
+            flex: 1; 
+            overflow: hidden; 
+            width: 100%;
+        }
+
+        /* Coluna de Produtos */
+        .produtos { 
+            flex: 2; 
+            padding: 1.5%; 
+            overflow-y: auto; 
+            border-right: 2px solid #ddd; 
+            background: #f9f9f9;
+        }
+
+        /* Coluna da Sacola */
+        .sacola { 
+            flex: 1; 
+            padding: 1.5%; 
+            background: white; 
+            display: flex; 
+            flex-direction: column; 
+            box-shadow: -2px 0 5px rgba(0,0,0,0.05);
+            min-width: 300px;
+        }
+
+        /* Área do Histórico (Fica na base) */
+        .historico { 
+            height: 30vh; /* Ocupa 30% da altura da tela fixa */
+            padding: 15px 20px; 
+            background: #fff; 
+            border-top: 4px solid #d32f2f; 
+            overflow-y: auto;
+        }
+
+        /* Elementos Visuais */
+        h2, h3 { color: #d32f2f; margin-top: 0; font-size: 1.5rem; }
+        input, select { 
+            padding: 10px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            margin-bottom: 10px; 
+            font-size: 14px; 
+            width: 100%; 
+        }
+
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; border-bottom: 1px solid #eee; text-align: left; }
         th { background: #d32f2f; color: white; position: sticky; top: 0; z-index: 5; }
+
+        /* Botões */
         .btn-add { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 1.2rem; font-weight: bold; margin-top: 10px; width: 100%; }
+        .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        
         .item-sacola { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #ccc; }
-        .btn-remover { background: #ff5252; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 8px; margin-left: 10px; }
-        .total-box { border-top: 2px solid #eee; padding-top: 15px; }
-        .val-final { color: #2e7d32; font-size: 28px; font-weight: bold; }
-        .acoes-hist { display: flex; gap: 10px; float: right; align-items: center; }
-        .btn-exportar { background: #1976d2; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
-        .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
-        .resumo-caixa { background: #e8f5e9; padding: 10px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
-        .tag-pagamento { font-size: 11px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; }
+        .btn-remover { background: #ff5252; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 8px; }
+
+        .total-box { border-top: 2px solid #eee; padding-top: 10px; margin-top: auto; }
+        .val-final { color: #2e7d32; font-size: 2rem; font-weight: bold; margin: 10px 0; text-align: right; }
+
+        .acoes-hist { display: flex; gap: 15px; float: right; align-items: center; }
+        .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
+        .tag-pagamento { font-size: 11px; padding: 2px 6px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; }
+
         #campo-parcelas { display: none; }
+
+        /* Ajuste para telas menores ou muito zoom */
+        @media (max-width: 800px) {
+            .main-container { flex-direction: column; overflow-y: auto; }
+            .produtos, .sacola { flex: none; width: 100%; border: none; }
+            .historico { height: auto; max-height: 400px; }
+        }
     </style>
 </head>
 <body>
 
 <div class="main-container">
     <div class="produtos">
-        <h2>Toca do Atleta - Catálogo</h2>
-        <input type="text" id="busca" onkeyup="filtrar()" placeholder="🔎 Buscar produto..." style="width: 95%;">
+        <h2>Catálogo</h2>
+        <input type="text" id="busca" onkeyup="filtrar()" placeholder="🔎 Buscar produto...">
         <table id="tabela">
             <thead>
-                <tr><th>Produto</th><th>Preço (R$)</th><th>Ação</th></tr>
+                <tr><th>Produto</th><th>Preço</th><th>Ação</th></tr>
             </thead>
             <tbody>
                 <tr><td>Whey Protein Max 900g</td><td>149.90</td><td><button class="btn-add" onclick="add('Whey Max', 149.90)">+</button></td></tr>
@@ -48,17 +114,19 @@
 
     <div class="sacola">
         <h2>Sacola</h2>
-        <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto; min-height: 100px;"></div>
+        <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto;"></div>
         
         <div class="total-box">
-            <div style="font-weight: bold;">Subtotal: <span id="subtotal">R$ 0,00</span></div>
+            <div style="display: flex; justify-content: space-between; font-weight: bold;">
+                <span>Subtotal:</span><span id="subtotal">R$ 0,00</span>
+            </div>
             <div style="display: flex; gap: 10px; margin-top: 5px;">
-                <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" style="width:100%" oninput="calcularTudo()"></div>
-                <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" style="width:100%" oninput="calcularTudo()"></div>
+                <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" oninput="calcularTudo()"></div>
+                <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" oninput="calcularTudo()"></div>
             </div>
             
             <label>Pagamento:</label>
-            <select id="metodo-pagamento" style="width: 100%;" onchange="verificarParcelas()">
+            <select id="metodo-pagamento" onchange="verificarParcelas()">
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
                 <option value="Cartão de Crédito">Cartão de Crédito</option>
@@ -67,7 +135,7 @@
 
             <div id="campo-parcelas">
                 <label>Parcelas:</label>
-                <select id="parcelas" style="width: 100%;">
+                <select id="parcelas">
                     <option value="1">1x (À vista)</option>
                     <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
                     <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
@@ -76,8 +144,8 @@
                 </select>
             </div>
 
-            <label>CPF na Nota (Opcional):</label>
-            <input type="text" id="cpf-cliente" placeholder="000.000.000-00" style="width: 93%;">
+            <label>CPF Cliente:</label>
+            <input type="text" id="cpf-cliente" placeholder="Opcional">
 
             <div class="val-final" id="total-final">R$ 0,00</div>
             <button class="btn-finalizar" onclick="finalizarVenda()">FECHAR VENDA</button>
@@ -89,9 +157,9 @@
     <div class="acoes-hist">
         <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
         <button class="btn-exportar" onclick="exportarCSV()">📥 CSV</button>
-        <button onclick="limparHistorico()" style="cursor:pointer; color: #d32f2f; border:none; background:none; text-decoration:underline; font-size:12px">Zerar Tudo</button>
+        <button onclick="limparHistorico()" style="cursor:pointer; color:#d32f2f; background:none; border:none; text-decoration:underline; font-size:12px">Limpar</button>
     </div>
-    <h3>📊 Vendas Salvas</h3>
+    <h3>📊 Histórico de Vendas</h3>
     <table id="tabela-historico">
         <thead>
             <tr><th>Data</th><th>Itens</th><th>Pagto</th><th>Total</th><th>Ação</th></tr>
@@ -103,9 +171,6 @@
 <script>
     let sacola = [];
     let historicoVendas = JSON.parse(localStorage.getItem('vendas_toca')) || [];
-
-    // Limpeza de segurança para dados corrompidos
-    if (!Array.isArray(historicoVendas)) historicoVendas = [];
 
     window.onload = renderHistorico;
 
@@ -121,7 +186,7 @@
     }
 
     function add(nome, preco) {
-        sacola.push({nome: nome, preco: parseFloat(preco)});
+        sacola.push({nome, preco: parseFloat(preco)});
         renderSacola();
     }
 
@@ -135,8 +200,7 @@
         lista.innerHTML = sacola.map((i, index) => `
             <div class="item-sacola">
                 <span>${i.nome}</span> 
-                <span><b>R$ ${i.preco.toFixed(2)}</b> 
-                <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
+                <span>R$ ${i.preco.toFixed(2)} <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
             </div>
         `).join('');
         calcularTudo();
@@ -156,31 +220,19 @@
     function finalizarVenda() {
         if(sacola.length === 0) return alert("Sacola vazia!");
         const valores = calcularTudo();
+        const metodo = document.getElementById("metodo-pagamento").value;
+        const parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
+        const cpf = document.getElementById("cpf-cliente").value || "N/A";
+        const dataHora = new Date().toLocaleString('pt-BR', {day:'2-digit', month:'2-digit', hour:'2-digit', minute:'2-digit'});
+
+        historicoVendas.push({ 
+            dataHora, itens: [...sacola], total: valores.total, 
+            subtotal: valores.sub, descP: valores.descP, descR: valores.descR,
+            metodo, parcelas, cpf 
+        });
         
-        let metodo = document.getElementById("metodo-pagamento").value;
-        let parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
-        let cpf = document.getElementById("cpf-cliente").value || "N/A";
-        let agora = new Date();
-        let dataHora = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
-        const novaVenda = { 
-            dataHora, 
-            itens: [...sacola], 
-            total: valores.total, 
-            subtotal: valores.sub,
-            descP: valores.descP,
-            descR: valores.descR,
-            metodo: metodo,
-            parcelas: parcelas,
-            cpf: cpf
-        };
-
-        historicoVendas.push(novaVenda);
         localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
-        
         sacola = [];
-        document.getElementById("desc-porcent").value = 0;
-        document.getElementById("desc-reais").value = 0;
         document.getElementById("cpf-cliente").value = "";
         renderSacola();
         renderHistorico();
@@ -189,53 +241,35 @@
     function renderHistorico() {
         const corpo = document.getElementById("corpo-historico");
         let somaTotal = 0;
-        
-        // Proteção: filtra apenas vendas que possuem dados válidos
-        const vendasValidas = historicoVendas.filter(v => v && v.total !== undefined);
-
-        corpo.innerHTML = [...vendasValidas].reverse().map((v) => {
+        const validas = historicoVendas.filter(v => v && v.total !== undefined);
+        corpo.innerHTML = [...validas].reverse().map((v) => {
             somaTotal += v.total;
-            let nomes = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(', ') : "venda antiga";
             let indexOriginal = historicoVendas.indexOf(v);
-            let detalhePg = v.metodo + (v.metodo === "Cartão de Crédito" ? ` ${v.parcelas}x` : "");
-
-            return `
-                <tr>
-                    <td style="font-size:11px">${v.dataHora}</td>
-                    <td style="font-size:11px">${nomes}</td>
-                    <td><span class="tag-pagamento">${detalhePg}</span></td>
-                    <td><b>R$ ${v.total.toFixed(2)}</b></td>
-                    <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
-                </tr>`;
+            return `<tr>
+                <td style="font-size:11px">${v.dataHora}</td>
+                <td style="font-size:11px">${v.itens.map(i=>i.nome).join(', ')}</td>
+                <td><span class="tag-pagamento">${v.metodo} ${v.metodo==='Cartão de Crédito'?v.parcelas+'x':''}</span></td>
+                <td><b>R$ ${v.total.toFixed(2)}</b></td>
+                <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
+            </tr>`;
         }).join('');
-        
         document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
     }
 
     function gerarRecibo(index) {
         const v = historicoVendas[index];
-        if (!v || !v.itens) return alert("Erro ao carregar dados desta venda.");
-
-        let itensHTML = v.itens.map(i => `
-            <tr><td style="font-size:12px">${i.nome}</td><td style="text-align:right">R$ ${i.preco.toFixed(2)}</td></tr>
-        `).join('');
-
         const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
         janelaRecibo.document.write(`
-            <html>
-            <head><style>body{font-family:'Courier New';width:280px;padding:10px;}.center{text-align:center;}.sep{border-top:1px dashed #000;margin:10px 0;}table{width:100%;}</style></head>
-            <body>
-                <div class="center"><h2>TOCA DO ATLETA</h2><p>${v.dataHora}</p></div>
-                <div class="sep"></div>
-                <table>${itensHTML}</table>
-                <div class="sep"></div>
-                <p>TOTAL: <b>R$ ${v.total.toFixed(2)}</b></p>
-                <p style="font-size:12px">Pgto: ${v.metodo} ${v.metodo==='Cartão de Crédito'?v.parcelas+'x':''}</p>
-                <p style="font-size:12px">CPF: ${v.cpf}</p>
-                <div class="center" style="margin-top:20px"><p>Obrigado!</p></div>
-                <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
-            </body>
-            </html>
+            <html><body style="font-family:monospace;width:280px;padding:10px;">
+            <center><h2>TOCA DO ATLETA</h2><p>${v.dataHora}</p></center>
+            <hr>
+            ${v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('')}
+            <hr>
+            <p><b>TOTAL: R$ ${v.total.toFixed(2)}</b></p>
+            <p>Pgto: ${v.metodo} ${v.metodo==='Cartão de Crédito'?v.parcelas+'x':''}</p>
+            <p>CPF: ${v.cpf}</p>
+            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
+            </body></html>
         `);
         janelaRecibo.document.close();
     }
@@ -243,18 +277,17 @@
     function exportarCSV() {
         let csv = "\ufeffData;Itens;Pagamento;Total\n";
         historicoVendas.forEach(v => {
-            let nomes = v.itens.map(i => i.nome).join(' | ');
-            csv += `${v.dataHora};${nomes};${v.metodo};${v.total}\n`;
+            csv += `${v.dataHora};${v.itens.map(i=>i.nome).join('|')};${v.metodo};${v.total}\n`;
         });
-        let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
-        let link = document.createElement("a");
+        const blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+        const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
         link.download = "vendas_toca.csv";
         link.click();
     }
 
     function limparHistorico() {
-        if(confirm("Isso apagará todas as vendas. Continuar?")) {
+        if(confirm("Zerar tudo?")) {
             localStorage.removeItem('vendas_toca');
             historicoVendas = [];
             renderHistorico();
