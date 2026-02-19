@@ -23,6 +23,7 @@
         .btn-add { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; width: 100%; }
         .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        .btn-exportar { background: #1976d2; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
         
         .item-sacola { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #ccc; }
         .btn-remover { background: #ff5252; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 4px 10px; }
@@ -30,7 +31,7 @@
         .total-box { border-top: 2px solid #d32f2f; padding-top: 20px; margin-top: 20px; }
         .val-final { color: #2e7d32; font-size: 2.2rem; font-weight: bold; text-align: right; margin: 10px 0; }
 
-        .acoes-hist { display: flex; gap: 15px; float: right; align-items: center; }
+        .acoes-hist { display: flex; gap: 10px; float: right; align-items: center; flex-wrap: wrap; }
         .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
         
@@ -66,7 +67,7 @@
                 <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" oninput="calcularTudo()"></div>
                 <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" oninput="calcularTudo()"></div>
             </div>
-            <input type="text" id="cpf-cliente" placeholder="CPF (opcional)">
+            <input type="text" id="cpf-cliente" placeholder="CPF do Cliente">
             <select id="metodo-pagamento" onchange="verificarParcelas()">
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
@@ -91,7 +92,8 @@
 <div class="historico">
     <div class="acoes-hist">
         <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
-        <input type="text" id="busca-hist" onkeyup="renderHistorico()" placeholder="🔎 Buscar por CPF ou Produto..." style="width: 250px; margin-bottom:0">
+        <input type="text" id="busca-hist" onkeyup="renderHistorico()" placeholder="🔎 Buscar por CPF ou Produto..." style="width: 200px; margin-bottom:0">
+        <button class="btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
         <button onclick="limparHistorico()" style="cursor:pointer; color:#d32f2f; background:none; border:none; text-decoration:underline;">Zerar</button>
     </div>
     <h3>📊 Histórico de Vendas</h3>
@@ -105,9 +107,8 @@
 
 <script>
     let sacola = [];
-    
-    // Tenta carregar, se falhar ou estiver corrompido, inicia vazio
     let historicoVendas = [];
+
     try {
         const salvo = localStorage.getItem('vendas_toca');
         historicoVendas = salvo ? JSON.parse(salvo) : [];
@@ -163,99 +164,19 @@
 
     function finalizarVenda() {
         if(sacola.length === 0) return alert("Sacola vazia!");
-        
         const valores = calcularTudo();
         const metodo = document.getElementById("metodo-pagamento").value;
         const parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
         const cpf = document.getElementById("cpf-cliente").value || "N/A";
         const dataHora = new Date().toLocaleString('pt-BR');
 
-        const novaVenda = { 
-            dataHora, 
-            itens: [...sacola], 
-            total: valores.total, 
-            subtotal: valores.sub, 
-            descP: valores.descP, 
-            descR: valores.descR,
-            metodo, 
-            parcelas, 
-            cpf 
-        };
-
-        historicoVendas.push(novaVenda);
-        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
+        historicoVendas.push({ 
+            dataHora, itens: [...sacola], total: valores.total, 
+            subtotal: valores.sub, descP: valores.descP, descR: valores.descR,
+            metodo, parcelas, cpf 
+        });
         
-        // Reset da interface
+        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
         sacola = [];
         document.getElementById("cpf-cliente").value = "";
-        document.getElementById("desc-porcent").value = 0;
-        document.getElementById("desc-reais").value = 0;
-        renderSacola();
-        renderHistorico();
-        alert("Venda Salva!");
-    }
-
-    function renderHistorico() {
-        const corpo = document.getElementById("corpo-historico");
-        const busca = document.getElementById("busca-hist").value.toLowerCase();
-        let somaTotal = 0;
-        
-        // Limpa o corpo antes de renderizar
-        corpo.innerHTML = "";
-
-        // Filtra e Renderiza
-        const filtradas = historicoVendas.filter(v => {
-            if (!v || !v.itens) return false;
-            const itensTxt = v.itens.map(i => i.nome).join(' ').toLowerCase();
-            const cpfTxt = (v.cpf || "").toLowerCase();
-            return cpfTxt.includes(busca) || itensTxt.includes(busca);
-        });
-
-        [...filtradas].reverse().forEach((v) => {
-            somaTotal += v.total;
-            let indexOriginal = historicoVendas.indexOf(v);
-            let tr = document.createElement("tr");
-            tr.innerHTML = `
-                <td style="font-size:11px">${v.dataHora}</td>
-                <td style="font-size:11px">${v.itens.map(i=>i.nome).join(', ')}</td>
-                <td>
-                    <small>CPF: ${v.cpf || 'N/A'}</small>
-                    <span class="tag-pagamento">${v.metodo} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</span>
-                </td>
-                <td><b>R$ ${v.total.toFixed(2)}</b></td>
-                <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
-            `;
-            corpo.appendChild(tr);
-        });
-        
-        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
-    }
-
-    function gerarRecibo(index) {
-        const v = historicoVendas[index];
-        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
-        janelaRecibo.document.write(`
-            <html><body style="font-family:monospace;padding:20px;">
-            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
-            <hr>
-            ${v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('')}
-            <hr>
-            <p><b>TOTAL: R$ ${v.total.toFixed(2)}</b></p>
-            <p>Pgto: ${v.metodo} ${v.metodo==='Cartão de Crédito'?v.parcelas+'x':''}</p>
-            <p>CPF: ${v.cpf}</p>
-            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
-            </body></html>
-        `);
-        janelaRecibo.document.close();
-    }
-
-    function limparHistorico() {
-        if(confirm("Isso apagará todas as vendas do banco de dados. Confirma?")) {
-            localStorage.removeItem('vendas_toca');
-            historicoVendas = [];
-            renderHistorico();
-        }
-    }
-</script>
-</body>
-</html>
+        document.getElementById("desc-porcent").value
