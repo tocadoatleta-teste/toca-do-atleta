@@ -109,15 +109,22 @@
     let sacola = [];
     let historicoVendas = [];
 
-    try {
-        const salvo = localStorage.getItem('vendas_toca');
-        historicoVendas = salvo ? JSON.parse(salvo) : [];
-        if(!Array.isArray(historicoVendas)) historicoVendas = [];
-    } catch(e) {
-        historicoVendas = [];
+    // Tenta carregar o histórico de várias formas para não perder dados
+    function carregarDados() {
+        try {
+            const salvo = localStorage.getItem('vendas_toca') || localStorage.getItem('vendas_pdv');
+            historicoVendas = salvo ? JSON.parse(salvo) : [];
+            if(!Array.isArray(historicoVendas)) historicoVendas = [];
+        } catch(e) {
+            console.error("Erro ao carregar dados", e);
+            historicoVendas = [];
+        }
     }
 
-    window.onload = renderHistorico;
+    window.onload = () => {
+        carregarDados();
+        renderHistorico();
+    };
 
     function filtrarProdutos() {
         let input = document.getElementById("busca-prod").value.toLowerCase();
@@ -179,4 +186,91 @@
         localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
         sacola = [];
         document.getElementById("cpf-cliente").value = "";
-        document.getElementById("desc-porcent").value
+        document.getElementById("desc-porcent").value = 0;
+        document.getElementById("desc-reais").value = 0;
+        renderSacola();
+        renderHistorico();
+        alert("Venda Salva!");
+    }
+
+    function renderHistorico() {
+        const corpo = document.getElementById("corpo-historico");
+        const busca = document.getElementById("busca-hist").value.toLowerCase();
+        let somaTotal = 0;
+        corpo.innerHTML = "";
+
+        // Filtro robusto que aceita dados antigos e novos
+        const filtradas = historicoVendas.filter(v => {
+            if (!v) return false;
+            const itensTxt = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' ').toLowerCase() : String(v.itens).toLowerCase();
+            const cpfTxt = (v.cpf || "N/A").toLowerCase();
+            return cpfTxt.includes(busca) || itensTxt.includes(busca);
+        });
+
+        [...filtradas].reverse().forEach((v) => {
+            const totalVenda = parseFloat(v.total || 0);
+            somaTotal += totalVenda;
+            let indexOriginal = historicoVendas.indexOf(v);
+            
+            let tr = document.createElement("tr");
+            const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>i.nome).join(', ') : v.itens;
+            
+            tr.innerHTML = `
+                <td style="font-size:11px">${v.dataHora}</td>
+                <td style="font-size:11px">${listaItens}</td>
+                <td>
+                    <small>CPF: ${v.cpf || 'N/A'}</small>
+                    <span class="tag-pagamento">${v.metodo || 'Outro'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</span>
+                </td>
+                <td><b>R$ ${totalVenda.toFixed(2)}</b></td>
+                <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
+            `;
+            corpo.appendChild(tr);
+        });
+        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
+    }
+
+    function gerarRecibo(index) {
+        const v = historicoVendas[index];
+        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : `<p>${v.itens}</p>`;
+        
+        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
+        janelaRecibo.document.write(`
+            <html><body style="font-family:monospace;padding:20px;">
+            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
+            <hr>
+            ${listaItens}
+            <hr>
+            <p><b>TOTAL: R$ ${parseFloat(v.total).toFixed(2)}</b></p>
+            <p>Pgto: ${v.metodo || 'N/A'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
+            <p>CPF: ${v.cpf || 'N/A'}</p>
+            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
+            </body></html>
+        `);
+        janelaRecibo.document.close();
+    }
+
+    function exportarCSV() {
+        if(historicoVendas.length === 0) return alert("Sem vendas para exportar!");
+        let csv = "\ufeffData;Itens;Pagamento;CPF;Total\n";
+        historicoVendas.forEach(v => {
+            const itensStr = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
+            csv += `${v.dataHora};${itensStr};${v.metodo || 'N/A'};${v.cpf || 'N/A'};${parseFloat(v.total).toFixed(2).replace('.', ',')}\n`;
+        });
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "relatorio_vendas_toca.csv";
+        link.click();
+    }
+
+    function limparHistorico() {
+        if(confirm("Isso apagará todas as vendas. Confirma?")) {
+            localStorage.removeItem('vendas_toca');
+            historicoVendas = [];
+            renderHistorico();
+        }
+    }
+</script>
+</body>
+</html>
