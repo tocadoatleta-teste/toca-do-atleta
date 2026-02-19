@@ -25,6 +25,7 @@
         .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .resumo-caixa { background: #e8f5e9; padding: 10px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 11px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; }
+        #campo-parcelas { display: none; } /* Escondido por padrão */
     </style>
 </head>
 <body>
@@ -53,215 +54,29 @@
             <div style="font-weight: bold;">Subtotal: <span id="subtotal">R$ 0,00</span></div>
             <div style="display: flex; gap: 10px; margin-top: 5px;">
                 <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" style="width:100%" oninput="calcularTudo()"></div>
-                <div style="flex:1"><label style="font-size:11px">Desc R$ (Crédito)</label><input type="number" id="desc-reais" value="0" style="width:100%" oninput="calcularTudo()"></div>
+                <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" style="width:100%" oninput="calcularTudo()"></div>
             </div>
             
             <label>Pagamento:</label>
-            <select id="metodo-pagamento" style="width: 100%;">
+            <select id="metodo-pagamento" style="width: 100%;" onchange="verificarParcelas()">
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
                 <option value="Cartão de Crédito">Cartão de Crédito</option>
                 <option value="Cartão de Débito">Cartão de Débito</option>
             </select>
 
-            <div class="val-final" id="total-final">R$ 0,00</div>
-            <button class="btn-finalizar" onclick="finalizarVenda()">FECHAR VENDA</button>
-        </div>
-    </div>
-</div>
-
-<div class="historico">
-    <div class="acoes-hist">
-        <div class="resumo-caixa">Caixa Total: <span id="total-acumulado">R$ 0,00</span></div>
-        <button class="btn-exportar" onclick="exportarCSV()">📥 Baixar Relatório</button>
-        <button onclick="limparHistorico()" style="cursor:pointer; color: #d32f2f; border:none; background:none; text-decoration:underline;">Zerar Histórico</button>
-    </div>
-    <h3>📊 Vendas Salvas</h3>
-    <table id="tabela-historico">
-        <thead>
-            <tr><th>Data/Hora</th><th>Itens</th><th>Pagto</th><th>Total</th><th>Ação</th></tr>
-        </thead>
-        <tbody id="corpo-historico"></tbody>
-    </table>
-</div>
-
-<script>
-    let sacola = [];
-    let historicoVendas = JSON.parse(localStorage.getItem('vendas_toca')) || [];
-
-    window.onload = renderHistorico;
-
-    function filtrar() {
-        let input = document.getElementById("busca").value.toLowerCase();
-        let rows = document.querySelectorAll("#tabela tbody tr");
-        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
-    }
-
-    function add(nome, preco) {
-        sacola.push({nome: nome, preco: parseFloat(preco)});
-        renderSacola();
-    }
-
-    function removerDaSacola(index) {
-        sacola.splice(index, 1);
-        renderSacola();
-    }
-
-    function renderSacola() {
-        const lista = document.getElementById("lista-sacola");
-        lista.innerHTML = sacola.map((i, index) => `
-            <div class="item-sacola">
-                <span>${i.nome}</span> 
-                <span><b>R$ ${i.preco.toFixed(2)}</b> 
-                <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
+            <div id="campo-parcelas">
+                <label>Parcelas:</label>
+                <select id="parcelas" style="width: 100%;">
+                    <option value="1">1x (À vista)</option>
+                    <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
+                    <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
+                    <option value="8">8x</option><option value="9">9x</option><option value="10">10x</option>
+                    <option value="11">11x</option><option value="12">12x</option>
+                </select>
             </div>
-        `).join('');
-        calcularTudo();
-    }
 
-    function calcularTudo() {
-        let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
-        let descP = parseFloat(document.getElementById("desc-porcent").value) || 0;
-        let descR = parseFloat(document.getElementById("desc-reais").value) || 0;
-        let total = (sub - (sub * (descP / 100))) - descR;
-        if (total < 0) total = 0;
-        document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
-        document.getElementById("total-final").innerText = `R$ ${total.toFixed(2)}`;
-        return { sub, total, descP, descR };
-    }
+            <label>CPF na Nota (Opcional):</label>
+            <input type="text" id="cpf-cliente" placeholder="000.000.000-00" style="width: 93%;">
 
-    function finalizarVenda() {
-        if(sacola.length === 0) return alert("Sacola vazia!");
-        const valores = calcularTudo();
-        
-        let itensRecibo = sacola.map(i => ({nome: i.nome, preco: i.preco}));
-        let metodo = document.getElementById("metodo-pagamento").value;
-        let agora = new Date();
-        let dataHora = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
-        historicoVendas.push({ 
-            dataHora, 
-            itens: itensRecibo, 
-            total: valores.total, 
-            subtotal: valores.sub,
-            descP: valores.descP,
-            descR: valores.descR,
-            metodo: metodo 
-        });
-        
-        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
-        
-        sacola = [];
-        document.getElementById("desc-porcent").value = 0;
-        document.getElementById("desc-reais").value = 0;
-        renderSacola();
-        renderHistorico();
-        alert("Venda salva com sucesso!");
-    }
-
-    function renderHistorico() {
-        const corpo = document.getElementById("corpo-historico");
-        let somaTotal = 0;
-        
-        // Invertemos para mostrar as mais recentes primeiro
-        const listaInvertida = [...historicoVendas].reverse();
-
-        corpo.innerHTML = listaInvertida.map((v) => {
-            somaTotal += v.total;
-            let listaItens = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
-            
-            // Pegamos o index real da venda no array original
-            let indexOriginal = historicoVendas.indexOf(v);
-
-            return `
-                <tr>
-                    <td style="font-size:11px">${v.dataHora}</td>
-                    <td style="font-size:11px">${listaItens}</td>
-                    <td><span class="tag-pagamento">${v.metodo}</span></td>
-                    <td><b>R$ ${v.total.toFixed(2)}</b></td>
-                    <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
-                </tr>`;
-        }).join('');
-        
-        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
-    }
-
-    function gerarRecibo(index) {
-        const venda = historicoVendas[index];
-        
-        // Verificação de segurança se os itens existem
-        if (!venda || !venda.itens || !Array.isArray(venda.itens)) {
-            return alert("Esta é uma venda antiga e não pode gerar recibo detalhado. Por favor, zere o histórico.");
-        }
-
-        let itensHTML = venda.itens.map(i => `
-            <tr>
-                <td style="font-size:12px">${i.nome}</td>
-                <td style="text-align:right">R$ ${i.preco.toFixed(2)}</td>
-            </tr>`).join('');
-
-        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
-        janelaRecibo.document.write(`
-            <html>
-            <head>
-                <title>Recibo - Toca do Atleta</title>
-                <style>
-                    body { font-family: 'Courier New', Courier, monospace; width: 280px; padding: 10px; }
-                    .center { text-align: center; }
-                    .separador { border-top: 1px dashed #000; margin: 10px 0; }
-                    table { width: 100%; border-collapse: collapse; }
-                    .total { font-weight: bold; font-size: 16px; }
-                </style>
-            </head>
-            <body>
-                <div class="center">
-                    <h2 style="margin:0">TOCA DO ATLETA</h2>
-                    <p style="font-size:11px">Icaraí - Niterói, RJ<br>${venda.dataHora}</p>
-                </div>
-                <div class="separador"></div>
-                <table>
-                    <thead><tr><th align="left">Item</th><th align="right">Preço</th></tr></thead>
-                    <tbody>${itensHTML}</tbody>
-                </table>
-                <div class="separador"></div>
-                <p style="font-size:12px">Subtotal: R$ ${parseFloat(venda.subtotal || 0).toFixed(2)}</p>
-                <p style="font-size:12px">Desc: ${venda.descP}% | R$ ${parseFloat(venda.descR || 0).toFixed(2)}</p>
-                <p class="total">TOTAL: R$ ${venda.total.toFixed(2)}</p>
-                <div class="separador"></div>
-                <p style="font-size:12px">Pagamento: ${venda.metodo}</p>
-                <div class="center" style="margin-top:20px">
-                    <p>Obrigado pela preferência!</p>
-                </div>
-                <script>
-                    window.onload = function() { window.print(); setTimeout(window.close, 500); }
-                <\/script>
-            </body>
-            </html>
-        `);
-        janelaRecibo.document.close();
-    }
-
-    function exportarCSV() {
-        if(historicoVendas.length === 0) return alert("Sem vendas!");
-        let csv = "\ufeffData/Hora;Itens;Pagamento;Total\n";
-        historicoVendas.forEach(v => { 
-            let listaItens = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
-            csv += `${v.dataHora};${listaItens};${v.metodo};${v.total.toFixed(2).replace('.', ',')}\n`; 
-        });
-        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `relatorio_toca.csv`;
-        link.click();
-    }
-
-    function limparHistorico() {
-        if(confirm("Deseja apagar todo o histórico?")) {
-            historicoVendas = [];
-            localStorage.removeItem('vendas_toca');
-            renderHistorico();
-        }
-    }
-</script>
-</body>
-</html>
+            <div class="val-final" id="total-final
