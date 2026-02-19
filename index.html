@@ -13,7 +13,7 @@
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
         table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
         th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #d32f2f; color: white; position: sticky; top: 0; }
+        th { background: #d32f2f; color: white; position: sticky; top: 0; z-index: 5; }
         .btn-add { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
         .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; width: 100%; }
         .item-sacola { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #ccc; }
@@ -25,7 +25,7 @@
         .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .resumo-caixa { background: #e8f5e9; padding: 10px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 11px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; }
-        #campo-parcelas { display: none; } /* Escondido por padrão */
+        #campo-parcelas { display: none; }
     </style>
 </head>
 <body>
@@ -48,7 +48,7 @@
 
     <div class="sacola">
         <h2>Sacola</h2>
-        <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto;"></div>
+        <div id="lista-sacola" style="flex-grow: 1; overflow-y: auto; min-height: 100px;"></div>
         
         <div class="total-box">
             <div style="font-weight: bold;">Subtotal: <span id="subtotal">R$ 0,00</span></div>
@@ -79,4 +79,187 @@
             <label>CPF na Nota (Opcional):</label>
             <input type="text" id="cpf-cliente" placeholder="000.000.000-00" style="width: 93%;">
 
-            <div class="val-final" id="total-final
+            <div class="val-final" id="total-final">R$ 0,00</div>
+            <button class="btn-finalizar" onclick="finalizarVenda()">FECHAR VENDA</button>
+        </div>
+    </div>
+</div>
+
+<div class="historico">
+    <div class="acoes-hist">
+        <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
+        <button class="btn-exportar" onclick="exportarCSV()">📥 CSV</button>
+        <button onclick="limparHistorico()" style="cursor:pointer; color: #d32f2f; border:none; background:none; text-decoration:underline; font-size:12px">Zerar Tudo</button>
+    </div>
+    <h3>📊 Vendas Salvas</h3>
+    <table id="tabela-historico">
+        <thead>
+            <tr><th>Data</th><th>Itens</th><th>Pagto</th><th>Total</th><th>Ação</th></tr>
+        </thead>
+        <tbody id="corpo-historico"></tbody>
+    </table>
+</div>
+
+<script>
+    let sacola = [];
+    let historicoVendas = JSON.parse(localStorage.getItem('vendas_toca')) || [];
+
+    // Limpeza de segurança para dados corrompidos
+    if (!Array.isArray(historicoVendas)) historicoVendas = [];
+
+    window.onload = renderHistorico;
+
+    function filtrar() {
+        let input = document.getElementById("busca").value.toLowerCase();
+        let rows = document.querySelectorAll("#tabela tbody tr");
+        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
+    }
+
+    function verificarParcelas() {
+        const metodo = document.getElementById("metodo-pagamento").value;
+        document.getElementById("campo-parcelas").style.display = (metodo === "Cartão de Crédito") ? "block" : "none";
+    }
+
+    function add(nome, preco) {
+        sacola.push({nome: nome, preco: parseFloat(preco)});
+        renderSacola();
+    }
+
+    function removerDaSacola(index) {
+        sacola.splice(index, 1);
+        renderSacola();
+    }
+
+    function renderSacola() {
+        const lista = document.getElementById("lista-sacola");
+        lista.innerHTML = sacola.map((i, index) => `
+            <div class="item-sacola">
+                <span>${i.nome}</span> 
+                <span><b>R$ ${i.preco.toFixed(2)}</b> 
+                <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
+            </div>
+        `).join('');
+        calcularTudo();
+    }
+
+    function calcularTudo() {
+        let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
+        let descP = parseFloat(document.getElementById("desc-porcent").value) || 0;
+        let descR = parseFloat(document.getElementById("desc-reais").value) || 0;
+        let total = (sub - (sub * (descP / 100))) - descR;
+        if (total < 0) total = 0;
+        document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
+        document.getElementById("total-final").innerText = `R$ ${total.toFixed(2)}`;
+        return { sub, total, descP, descR };
+    }
+
+    function finalizarVenda() {
+        if(sacola.length === 0) return alert("Sacola vazia!");
+        const valores = calcularTudo();
+        
+        let metodo = document.getElementById("metodo-pagamento").value;
+        let parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
+        let cpf = document.getElementById("cpf-cliente").value || "N/A";
+        let agora = new Date();
+        let dataHora = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+
+        const novaVenda = { 
+            dataHora, 
+            itens: [...sacola], 
+            total: valores.total, 
+            subtotal: valores.sub,
+            descP: valores.descP,
+            descR: valores.descR,
+            metodo: metodo,
+            parcelas: parcelas,
+            cpf: cpf
+        };
+
+        historicoVendas.push(novaVenda);
+        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
+        
+        sacola = [];
+        document.getElementById("desc-porcent").value = 0;
+        document.getElementById("desc-reais").value = 0;
+        document.getElementById("cpf-cliente").value = "";
+        renderSacola();
+        renderHistorico();
+    }
+
+    function renderHistorico() {
+        const corpo = document.getElementById("corpo-historico");
+        let somaTotal = 0;
+        
+        // Proteção: filtra apenas vendas que possuem dados válidos
+        const vendasValidas = historicoVendas.filter(v => v && v.total !== undefined);
+
+        corpo.innerHTML = [...vendasValidas].reverse().map((v) => {
+            somaTotal += v.total;
+            let nomes = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(', ') : "venda antiga";
+            let indexOriginal = historicoVendas.indexOf(v);
+            let detalhePg = v.metodo + (v.metodo === "Cartão de Crédito" ? ` ${v.parcelas}x` : "");
+
+            return `
+                <tr>
+                    <td style="font-size:11px">${v.dataHora}</td>
+                    <td style="font-size:11px">${nomes}</td>
+                    <td><span class="tag-pagamento">${detalhePg}</span></td>
+                    <td><b>R$ ${v.total.toFixed(2)}</b></td>
+                    <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
+                </tr>`;
+        }).join('');
+        
+        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
+    }
+
+    function gerarRecibo(index) {
+        const v = historicoVendas[index];
+        if (!v || !v.itens) return alert("Erro ao carregar dados desta venda.");
+
+        let itensHTML = v.itens.map(i => `
+            <tr><td style="font-size:12px">${i.nome}</td><td style="text-align:right">R$ ${i.preco.toFixed(2)}</td></tr>
+        `).join('');
+
+        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
+        janelaRecibo.document.write(`
+            <html>
+            <head><style>body{font-family:'Courier New';width:280px;padding:10px;}.center{text-align:center;}.sep{border-top:1px dashed #000;margin:10px 0;}table{width:100%;}</style></head>
+            <body>
+                <div class="center"><h2>TOCA DO ATLETA</h2><p>${v.dataHora}</p></div>
+                <div class="sep"></div>
+                <table>${itensHTML}</table>
+                <div class="sep"></div>
+                <p>TOTAL: <b>R$ ${v.total.toFixed(2)}</b></p>
+                <p style="font-size:12px">Pgto: ${v.metodo} ${v.metodo==='Cartão de Crédito'?v.parcelas+'x':''}</p>
+                <p style="font-size:12px">CPF: ${v.cpf}</p>
+                <div class="center" style="margin-top:20px"><p>Obrigado!</p></div>
+                <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
+            </body>
+            </html>
+        `);
+        janelaRecibo.document.close();
+    }
+
+    function exportarCSV() {
+        let csv = "\ufeffData;Itens;Pagamento;Total\n";
+        historicoVendas.forEach(v => {
+            let nomes = v.itens.map(i => i.nome).join(' | ');
+            csv += `${v.dataHora};${nomes};${v.metodo};${v.total}\n`;
+        });
+        let blob = new Blob([csv], {type: 'text/csv;charset=utf-8;'});
+        let link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = "vendas_toca.csv";
+        link.click();
+    }
+
+    function limparHistorico() {
+        if(confirm("Isso apagará todas as vendas. Continuar?")) {
+            localStorage.removeItem('vendas_toca');
+            historicoVendas = [];
+            renderHistorico();
+        }
+    }
+</script>
+</body>
+</html>
