@@ -8,21 +8,28 @@
         .main-container { display: flex; flex: 1; overflow: hidden; }
         .produtos { flex: 2; padding: 20px; overflow-y: auto; border-right: 2px solid #ddd; }
         .sacola { flex: 1; padding: 20px; background: white; display: flex; flex-direction: column; box-shadow: -2px 0 5px rgba(0,0,0,0.1); }
-        .historico { padding: 20px; background: #fff; border-top: 5px solid #d32f2f; max-height: 300px; overflow-y: auto; }
+        .historico { padding: 20px; background: #fff; border-top: 5px solid #d32f2f; max-height: 350px; overflow-y: auto; }
+        
         h2, h3 { color: #d32f2f; margin-top: 0; }
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; font-size: 14px; }
+        
         table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
         th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
-        th { background: #d32f2f; color: white; position: sticky; top: 0; }
+        th { background: #d32f2f; color: white; position: sticky; top: 0; z-index: 10; }
+        
         .btn-add { background: #2e7d32; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; }
-        .btn-recibo { background: #ffa000; color: white; border: none; padding: 10px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 5px; width: 100%; }
+        .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; width: 100%; }
+        
         .item-sacola { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px dashed #ccc; }
         .btn-remover { background: #ff5252; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 2px 8px; margin-left: 10px; }
+        
         .total-box { border-top: 2px solid #eee; padding-top: 15px; }
         .val-final { color: #2e7d32; font-size: 28px; font-weight: bold; }
+        
         .acoes-hist { display: flex; gap: 10px; float: right; align-items: center; }
         .btn-exportar { background: #1976d2; color: white; border: none; padding: 8px 12px; border-radius: 4px; cursor: pointer; }
+        .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 4px 8px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
+        
         .resumo-caixa { background: #e8f5e9; padding: 10px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 11px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; }
     </style>
@@ -59,183 +66,4 @@
             <label>Pagamento:</label>
             <select id="metodo-pagamento" style="width: 100%;">
                 <option value="Dinheiro">Dinheiro</option>
-                <option value="Pix">Pix</option>
-                <option value="Cartão de Crédito">Cartão de Crédito</option>
-                <option value="Cartão de Débito">Cartão de Débito</option>
-            </select>
-
-            <div class="val-final" id="total-final">R$ 0,00</div>
-            <button class="btn-finalizar" onclick="finalizarVenda()">FECHAR VENDA</button>
-            <button class="btn-recibo" onclick="gerarRecibo()">GERAR RECIBO (CUPOM)</button>
-        </div>
-    </div>
-</div>
-
-<div class="historico">
-    <div class="acoes-hist">
-        <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
-        <button class="btn-exportar" onclick="exportarCSV()">📥 Baixar Relatório</button>
-        <button onclick="limparHistorico()" style="cursor:pointer; color: #d32f2f; border:none; background:none; text-decoration:underline;">Zerar Histórico</button>
-    </div>
-    <h3>📊 Vendas Salvas</h3>
-    <table id="tabela-historico">
-        <thead>
-            <tr><th>Data/Hora</th><th>Itens</th><th>Pagto</th><th>Total</th></tr>
-        </thead>
-        <tbody id="corpo-historico"></tbody>
-    </table>
-</div>
-
-<script>
-    let sacola = [];
-    let historicoVendas = JSON.parse(localStorage.getItem('vendas_toca')) || [];
-
-    window.onload = renderHistorico;
-
-    function filtrar() {
-        let input = document.getElementById("busca").value.toLowerCase();
-        let rows = document.querySelectorAll("#tabela tbody tr");
-        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
-    }
-
-    function add(nome, preco) {
-        sacola.push({nome, preco});
-        renderSacola();
-    }
-
-    function removerDaSacola(index) {
-        sacola.splice(index, 1);
-        renderSacola();
-    }
-
-    function renderSacola() {
-        const lista = document.getElementById("lista-sacola");
-        lista.innerHTML = sacola.map((i, index) => `
-            <div class="item-sacola">
-                <span>${i.nome}</span> 
-                <span><b>R$ ${i.preco.toFixed(2)}</b> 
-                <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
-            </div>
-        `).join('');
-        calcularTudo();
-    }
-
-    function calcularTudo() {
-        let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
-        let descP = document.getElementById("desc-porcent").value || 0;
-        let descR = document.getElementById("desc-reais").value || 0;
-        let total = (sub - (sub * (descP / 100))) - descR;
-        if (total < 0) total = 0;
-        document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
-        document.getElementById("total-final").innerText = `R$ ${total.toFixed(2)}`;
-        return { sub, total, descP, descR };
-    }
-
-    function finalizarVenda() {
-        if(sacola.length === 0) return alert("Sacola vazia!");
-        const valores = calcularTudo();
-        let nomesItens = sacola.map(i => i.nome).join(' | ');
-        let metodo = document.getElementById("metodo-pagamento").value;
-        let agora = new Date();
-        let dataHora = agora.toLocaleDateString('pt-BR') + " " + agora.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-
-        historicoVendas.push({ dataHora, itens: nomesItens, total: valores.total, metodo: metodo });
-        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
-        
-        sacola = [];
-        document.getElementById("desc-porcent").value = 0;
-        document.getElementById("desc-reais").value = 0;
-        renderSacola();
-        renderHistorico();
-        alert("Venda finalizada e salva no histórico!");
-    }
-
-    function gerarRecibo() {
-        if(sacola.length === 0) return alert("Adicione itens na sacola primeiro!");
-        
-        const valores = calcularTudo();
-        const metodo = document.getElementById("metodo-pagamento").value;
-        const agora = new Date().toLocaleString('pt-BR');
-        
-        let itensHTML = sacola.map(i => `
-            <tr>
-                <td style="font-size:12px">${i.nome}</td>
-                <td style="text-align:right">R$ ${i.preco.toFixed(2)}</td>
-            </tr>`).join('');
-
-        const janelaRecibo = window.open('', '', 'width=400,height=600');
-        janelaRecibo.document.write(`
-            <html>
-            <head>
-                <title>Recibo - Toca do Atleta</title>
-                <style>
-                    body { font-family: 'Courier New', Courier, monospace; width: 300px; padding: 10px; }
-                    .center { text-align: center; }
-                    .separador { border-top: 1px dashed #000; margin: 10px 0; }
-                    table { width: 100%; border-collapse: collapse; }
-                    .total { font-weight: bold; font-size: 16px; }
-                </style>
-            </head>
-            <body onload="window.print();window.close();">
-                <div class="center">
-                    <h2 style="margin:0">TOCA DO ATLETA</h2>
-                    <p style="font-size:12px">Icaraí - Niterói, RJ<br>${agora}</p>
-                </div>
-                <div class="separador"></div>
-                <table>
-                    <thead><tr><th align="left">Item</th><th align="right">Preço</th></tr></thead>
-                    <tbody>${itensHTML}</tbody>
-                </table>
-                <div class="separador"></div>
-                <p>Subtotal: R$ ${valores.sub.toFixed(2)}</p>
-                <p>Desc (%): ${valores.descP}%</p>
-                <p>Desc (R$): R$ ${valores.descR.toFixed(2)}</p>
-                <p class="total">TOTAL: R$ ${valores.total.toFixed(2)}</p>
-                <div class="separador"></div>
-                <p>Pagamento: ${metodo}</p>
-                <div class="center" style="margin-top:20px">
-                    <p>Obrigado pela preferência!</p>
-                </div>
-            </body>
-            </html>
-        `);
-        janelaRecibo.document.close();
-    }
-
-    function renderHistorico() {
-        const corpo = document.getElementById("corpo-historico");
-        let somaTotal = 0;
-        corpo.innerHTML = historicoVendas.map(v => {
-            somaTotal += v.total;
-            return `<tr><td>${v.dataHora}</td><td style="font-size:11px">${v.itens}</td><td><span class="tag-pagamento">${v.metodo}</span></td><td><b>R$ ${v.total.toFixed(2)}</b></td></tr>`;
-        }).reverse().join('');
-        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
-    }
-
-    function exportarCSV() {
-        if(historicoVendas.length === 0) return alert("Sem vendas!");
-        let csv = "\ufeffData/Hora;Itens;Pagamento;Total\n";
-        historicoVendas.forEach(v => { csv += `${v.dataHora};${v.itens};${v.metodo};${v.total.toFixed(2).replace('.', ',')}\n`; });
-        let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        let link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = `relatorio_toca.csv`;
-        link.click();
-    }
-
-    function limparHistorico() {
-        if(confirm("Zerar relatório?")) {
-            historicoVendas = [];
-            localStorage.removeItem('vendas_toca');
-            renderHistorico();
-        }
-    }
-
-    function filtrar() {
-        let input = document.getElementById("busca").value.toLowerCase();
-        let rows = document.querySelectorAll("#tabela tbody tr");
-        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
-    }
-</script>
-</body>
-</html>
+                <option value="
