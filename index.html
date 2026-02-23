@@ -8,20 +8,23 @@
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
         
-        /* Cabeçalho com Logo */
-        .header { 
-            background: white; 
-            padding: 15px 20px; 
-            display: flex; 
-            align-items: center; 
-            justify-content: space-between; 
+        /* Estilo do Cabeçalho com Logo Centralizada */
+        .header-logo {
+            background: #fff;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
             border-bottom: 3px solid #d32f2f;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
         }
-        .header img { height: 60px; } /* Ajuste de tamanho da logo */
-        .header h1 { color: #d32f2f; margin: 0; font-size: 24px; }
+        .header-logo img {
+            height: 100px; /* Tamanho ajustado para melhor visibilidade */
+            margin-bottom: 5px;
+        }
 
-        .main-container { display: flex; width: 100%; min-height: 60vh; padding-top: 10px; }
+        .main-container { display: flex; width: 100%; min-height: 60vh; }
         .produtos { flex: 2; padding: 20px; border-right: 2px solid #ddd; background: #f9f9f9; }
         .sacola { width: 400px; padding: 20px; background: white; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
         .historico { padding: 20px; background: #fff; border-top: 4px solid #d32f2f; min-height: 40vh; }
@@ -48,40 +51,34 @@
         .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
         
-        .admin-catalogo { background: #eee; padding: 15px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; border-left: 5px solid #2e7d32; }
-        .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; }
-
         #campo-parcelas { display: none; }
     </style>
 </head>
 <body>
 
-<header class="header">
-    <img src="tocaa-removebg-preview.png" alt="Logo Toca do Atleta">
-    <h1>PDV Interno</h1>
-</header>
+<div class="header-logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAbFBMVEX///8AAAD8/Pz4+Pj19fXw8PDm5ubf39/X19fR0dHLy8vFxcXAwMC8vLyyso6tra2np6eioqKbm5uWlpZwcHBsrW6Hh4eDg4N+fnp6enp2dnZ0dHRxcXFubm5qampoaGhmZmZkZGRhYWFoaGgm9C+OAAAFVUlEQVR4nO2daVviMBAARW6V9S7IqSAIev//P9u0pXNf09CZnSST7/Mhhz6SNDOZpInZTCY7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztbiSInp8fHx8fHx8fHx8fH/0nUhfPz8/Pz8/Pz8/Pz89+A89HlR7uKzX8CshA9R73C5v8K3DnqFe79L6DeUa/w7v8ClI7+L383IAt79CsgC6sXmYXVv8XNwurNAnpZvVpALyvOAvSyzAnpZfU6Ar2segH9rvpA9LvqBvS7Cgfov67EAfqvq7CAr7XvA/qv696fXtc9YPDWng/ov/V9QH/rvg/ovvV9QL/X3v0A8NdqFfB3rVXA37XvA7pve38Aum+99/6V3nt/XmN+AK7V58G6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6S68L78fHx8fHx8fHx8fHx/+Z9Qf/f6S2FkL7tAAAAABJRU5ErkJggg==" alt="Logo Toca do Atleta">
+    <h2 style="margin:0">Toca do Atleta - PDV</h2>
+</div>
 
 <div class="main-container">
     <div class="produtos">
-        <h2>Catálogo de Suplementos</h2>
-        
-        <div class="admin-catalogo">
-            <input type="text" id="novo-nome" placeholder="Novo Produto" style="margin-bottom:0">
-            <input type="number" id="novo-preco" placeholder="Preço R$" style="margin-bottom:0; width: 120px;">
-            <button class="btn-add" onclick="cadastrarProduto()">CADASTRAR</button>
-        </div>
-
+        <h2>Catálogo</h2>
         <input type="text" id="busca-prod" onkeyup="filtrarProdutos()" placeholder="🔎 Buscar no catálogo...">
         <table id="tabela-produtos">
             <thead>
-                <tr><th>Produto</th><th>Preço</th><th>Ações</th></tr>
+                <tr><th>Produto</th><th>Preço</th><th>Ação</th></tr>
             </thead>
-            <tbody id="corpo-catalogo"></tbody>
+            <tbody>
+                <tr><td>Whey Protein Max 900g</td><td>149.90</td><td><button class="btn-add" onclick="add('Whey Max', 149.90)">+</button></td></tr>
+                <tr><td>Creatina Pura 300g</td><td>89.00</td><td><button class="btn-add" onclick="add('Creatina 300g', 89.00)">+</button></td></tr>
+                <tr><td>Camisa Dry Fit (M)</td><td>55.00</td><td><button class="btn-add" onclick="add('Camisa Dry Fit', 55.00)">+</button></td></tr>
+            </tbody>
         </table>
     </div>
 
     <div class="sacola">
-        <h2>Sacola de Compras</h2>
+        <h2>Sacola</h2>
         <div id="lista-sacola"></div>
         <div class="total-box">
             <div style="display:flex; justify-content: space-between; font-weight: bold;">
@@ -91,7 +88,7 @@
                 <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" oninput="calcularTudo()"></div>
                 <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" oninput="calcularTudo()"></div>
             </div>
-            <input type="text" id="cpf-cliente" placeholder="CPF do Cliente (Opcional)">
+            <input type="text" id="cpf-cliente" placeholder="CPF do Cliente">
             <select id="metodo-pagamento" onchange="verificarParcelas()">
                 <option value="Dinheiro">Dinheiro</option>
                 <option value="Pix">Pix</option>
@@ -103,7 +100,8 @@
                     <option value="1">1x (À vista)</option>
                     <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
                     <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
-                    <option value="12">12x</option>
+                    <option value="8">8x</option><option value="9">9x</option><option value="10">10x</option>
+                    <option value="11">11x</option><option value="12">12x</option>
                 </select>
             </div>
             <div class="val-final" id="total-final">R$ 0,00</div>
@@ -114,15 +112,15 @@
 
 <div class="historico">
     <div class="acoes-hist">
-        <div class="resumo-caixa">Caixa Hoje: <span id="total-acumulado">R$ 0,00</span></div>
+        <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
         <input type="text" id="busca-hist" onkeyup="renderHistorico()" placeholder="🔎 Buscar por CPF ou Produto..." style="width: 200px; margin-bottom:0">
-        <button class="btn-exportar" onclick="exportarCSV()">📥 Baixar Relatório</button>
-        <button onclick="limparHistorico()" style="cursor:pointer; color:#d32f2f; background:none; border:none; text-decoration:underline; font-size: 12px;">Zerar Tudo</button>
+        <button class="btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
+        <button onclick="limparHistorico()" style="cursor:pointer; color:#d32f2f; background:none; border:none; text-decoration:underline;">Zerar</button>
     </div>
-    <h3>📊 Vendas Salvas</h3>
+    <h3>📊 Histórico de Vendas</h3>
     <table id="tabela-historico">
         <thead>
-            <tr><th>Data/Hora</th><th>Itens</th><th>Pagto / CPF</th><th>Total</th><th>Ações</th></tr>
+            <tr><th>Data/Hora</th><th>Itens</th><th>Pagamento / CPF</th><th>Total</th><th>Ação</th></tr>
         </thead>
         <tbody id="corpo-historico"></tbody>
     </table>
@@ -131,16 +129,12 @@
 <script>
     let sacola = [];
     let historicoVendas = [];
-    let catalogo = JSON.parse(localStorage.getItem('catalogo_toca')) || [
-        {nome: 'Whey Protein Max 900g', preco: 149.90},
-        {nome: 'Creatina Pura 300g', preco: 89.00},
-        {nome: 'Camisa Dry Fit (M)', preco: 55.00}
-    ];
 
     function carregarDados() {
         try {
             const salvo = localStorage.getItem('vendas_toca') || localStorage.getItem('vendas_pdv');
             historicoVendas = salvo ? JSON.parse(salvo) : [];
+            if(!Array.isArray(historicoVendas)) historicoVendas = [];
         } catch(e) {
             historicoVendas = [];
         }
@@ -148,45 +142,12 @@
 
     window.onload = () => {
         carregarDados();
-        renderCatalogo();
         renderHistorico();
     };
 
-    function renderCatalogo() {
-        const corpo = document.getElementById("corpo-catalogo");
-        corpo.innerHTML = catalogo.map((prod, index) => `
-            <tr>
-                <td><b>${prod.nome}</b></td>
-                <td>R$ ${parseFloat(prod.preco).toFixed(2)}</td>
-                <td>
-                    <button class="btn-add" onclick="add('${prod.nome}', ${prod.preco})">+</button>
-                    <button class="btn-del-prod" onclick="excluirProduto(${index})">🗑️</button>
-                </td>
-            </tr>
-        `).join('');
-        localStorage.setItem('catalogo_toca', JSON.stringify(catalogo));
-    }
-
-    function cadastrarProduto() {
-        const nome = document.getElementById("novo-nome").value;
-        const preco = parseFloat(document.getElementById("novo-preco").value);
-        if(!nome || isNaN(preco)) return alert("Preencha nome e preço!");
-        catalogo.push({nome, preco});
-        document.getElementById("novo-nome").value = "";
-        document.getElementById("novo-preco").value = "";
-        renderCatalogo();
-    }
-
-    function excluirProduto(index) {
-        if(confirm("Remover este produto do catálogo?")) {
-            catalogo.splice(index, 1);
-            renderCatalogo();
-        }
-    }
-
     function filtrarProdutos() {
         let input = document.getElementById("busca-prod").value.toLowerCase();
-        let rows = document.querySelectorAll("#corpo-catalogo tr");
+        let rows = document.querySelectorAll("#tabela-produtos tbody tr");
         rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
     }
 
@@ -209,7 +170,7 @@
         const lista = document.getElementById("lista-sacola");
         lista.innerHTML = sacola.map((i, index) => `
             <div class="item-sacola">
-                <span>${i.nome}</span> 
+                <span><b>${i.nome}</b></span> 
                 <span>R$ ${i.preco.toFixed(2)} <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
             </div>
         `).join('');
@@ -228,7 +189,7 @@
     }
 
     function finalizarVenda() {
-        if(sacola.length === 0) return alert("Adicione produtos primeiro!");
+        if(sacola.length === 0) return alert("Sacola vazia!");
         const valores = calcularTudo();
         const metodo = document.getElementById("metodo-pagamento").value;
         const parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
@@ -236,12 +197,9 @@
         const dataHora = new Date().toLocaleString('pt-BR');
 
         historicoVendas.push({ 
-            dataHora, 
-            itens: [...sacola], 
-            total: valores.total, 
-            metodo, 
-            parcelas, 
-            cpf 
+            dataHora, itens: [...sacola], total: valores.total, 
+            subtotal: valores.sub, descP: valores.descP, descR: valores.descR,
+            metodo, parcelas, cpf 
         });
         
         localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
@@ -251,7 +209,7 @@
         document.getElementById("desc-reais").value = 0;
         renderSacola();
         renderHistorico();
-        alert("Venda Finalizada com Sucesso!");
+        alert("Venda Salva!");
     }
 
     function renderHistorico() {
@@ -262,7 +220,7 @@
 
         const filtradas = historicoVendas.filter(v => {
             if (!v) return false;
-            const itensTxt = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' ').toLowerCase() : "venda antiga";
+            const itensTxt = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' ').toLowerCase() : String(v.itens).toLowerCase();
             const cpfTxt = (v.cpf || "N/A").toLowerCase();
             return cpfTxt.includes(busca) || itensTxt.includes(busca);
         });
@@ -273,14 +231,14 @@
             let indexOriginal = historicoVendas.indexOf(v);
             
             let tr = document.createElement("tr");
-            const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>i.nome).join(', ') : "Dados antigos";
+            const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>i.nome).join(', ') : v.itens;
             
             tr.innerHTML = `
-                <td style="font-size:11px">${v.dataHora || 'Sem data'}</td>
+                <td style="font-size:11px">${v.dataHora}</td>
                 <td style="font-size:11px">${listaItens}</td>
                 <td>
                     <small>CPF: ${v.cpf || 'N/A'}</small>
-                    <span class="tag-pagamento">${v.metodo || 'Padrão'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</span>
+                    <span class="tag-pagamento">${v.metodo || 'Outro'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</span>
                 </td>
                 <td><b>R$ ${totalVenda.toFixed(2)}</b></td>
                 <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
@@ -292,18 +250,18 @@
 
     function gerarRecibo(index) {
         const v = historicoVendas[index];
-        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : '<p>Venda antiga</p>';
+        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : `<p>${v.itens}</p>`;
         
         const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
         janelaRecibo.document.write(`
             <html><body style="font-family:monospace;padding:20px;">
-            <center><img src="tocaa-removebg-preview.png" style="width:100px;"><br><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
+            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
             <hr>
             ${listaItens}
             <hr>
             <p><b>TOTAL: R$ ${parseFloat(v.total).toFixed(2)}</b></p>
-            <p>Pgto: ${v.metodo} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
-            <p>CPF: ${v.cpf}</p>
+            <p>Pgto: ${v.metodo || 'N/A'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
+            <p>CPF: ${v.cpf || 'N/A'}</p>
             <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
             </body></html>
         `);
@@ -311,21 +269,21 @@
     }
 
     function exportarCSV() {
-        if(historicoVendas.length === 0) return alert("Sem dados!");
+        if(historicoVendas.length === 0) return alert("Sem vendas para exportar!");
         let csv = "\ufeffData;Itens;Pagamento;CPF;Total\n";
         historicoVendas.forEach(v => {
-            const itensStr = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : "Antigo";
-            csv += `${v.dataHora};${itensStr};${v.metodo};${v.cpf};${parseFloat(v.total).toFixed(2).replace('.', ',')}\n`;
+            const itensStr = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
+            csv += `${v.dataHora};${itensStr};${v.metodo || 'N/A'};${v.cpf || 'N/A'};${parseFloat(v.total).toFixed(2).replace('.', ',')}\n`;
         });
         const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
-        link.download = "Vendas_Toca_Atleta.csv";
+        link.download = "relatorio_vendas_toca.csv";
         link.click();
     }
 
     function limparHistorico() {
-        if(confirm("APAGAR TUDO? Isso não pode ser desfeito.")) {
+        if(confirm("Isso apagará todas as vendas. Confirma?")) {
             localStorage.removeItem('vendas_toca');
             historicoVendas = [];
             renderHistorico();
