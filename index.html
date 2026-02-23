@@ -36,7 +36,8 @@
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
         
         .admin-catalogo { background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
-        .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; }
+        .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; font-size: 18px; }
+        .btn-edit-prod { color: #1976d2; border: none; background: none; cursor: pointer; font-weight: bold; font-size: 18px; margin-right: 5px; }
 
         #campo-parcelas { display: none; }
     </style>
@@ -58,8 +59,7 @@
             <thead>
                 <tr><th>Produto</th><th>Preço</th><th>Ações</th></tr>
             </thead>
-            <tbody id="corpo-catalogo">
-                </tbody>
+            <tbody id="corpo-catalogo"></tbody>
         </table>
     </div>
 
@@ -145,11 +145,28 @@
                 <td>R$ ${prod.preco.toFixed(2)}</td>
                 <td>
                     <button class="btn-add" onclick="add('${prod.nome}', ${prod.preco})">+</button>
+                    <button class="btn-edit-prod" onclick="editarProduto(${index})">✏️</button>
                     <button class="btn-del-prod" onclick="excluirProduto(${index})">🗑️</button>
                 </td>
             </tr>
         `).join('');
         localStorage.setItem('catalogo_toca', JSON.stringify(catalogo));
+    }
+
+    function editarProduto(index) {
+        const prod = catalogo[index];
+        const novoNome = prompt("Editar nome do produto:", prod.nome);
+        const novoPreco = prompt("Editar preço do produto (use ponto para decimais):", prod.preco);
+
+        if (novoNome !== null && novoNome.trim() !== "") {
+            catalogo[index].nome = novoNome;
+        }
+        
+        if (novoPreco !== null && !isNaN(parseFloat(novoPreco))) {
+            catalogo[index].preco = parseFloat(novoPreco);
+        }
+
+        renderCatalogo();
     }
 
     function cadastrarProduto() {
@@ -316,4 +333,3 @@
 </script>
 </body>
 </html>
-
