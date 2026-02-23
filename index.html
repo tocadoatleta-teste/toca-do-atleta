@@ -35,6 +35,9 @@
         .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
         
+        .admin-catalogo { background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
+        .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; }
+
         #campo-parcelas { display: none; }
     </style>
 </head>
@@ -43,16 +46,20 @@
 <div class="main-container">
     <div class="produtos">
         <h2>Catálogo</h2>
+        
+        <div class="admin-catalogo">
+            <input type="text" id="novo-nome" placeholder="Nome do Produto" style="margin-bottom:0">
+            <input type="number" id="novo-preco" placeholder="R$ 0.00" style="margin-bottom:0; width: 120px;">
+            <button class="btn-add" onclick="cadastrarProduto()">+ Cadastrar</button>
+        </div>
+
         <input type="text" id="busca-prod" onkeyup="filtrarProdutos()" placeholder="🔎 Buscar no catálogo...">
         <table id="tabela-produtos">
             <thead>
-                <tr><th>Produto</th><th>Preço</th><th>Ação</th></tr>
+                <tr><th>Produto</th><th>Preço</th><th>Ações</th></tr>
             </thead>
-            <tbody>
-                <tr><td>Whey Protein Max 900g</td><td>149.90</td><td><button class="btn-add" onclick="add('Whey Max', 149.90)">+</button></td></tr>
-                <tr><td>Creatina Pura 300g</td><td>89.00</td><td><button class="btn-add" onclick="add('Creatina 300g', 89.00)">+</button></td></tr>
-                <tr><td>Camisa Dry Fit (M)</td><td>55.00</td><td><button class="btn-add" onclick="add('Camisa Dry Fit', 55.00)">+</button></td></tr>
-            </tbody>
+            <tbody id="corpo-catalogo">
+                </tbody>
         </table>
     </div>
 
@@ -108,27 +115,63 @@
 <script>
     let sacola = [];
     let historicoVendas = [];
+    let catalogo = JSON.parse(localStorage.getItem('catalogo_toca')) || [
+        {nome: 'Whey Protein Max 900g', preco: 149.90},
+        {nome: 'Creatina Pura 300g', preco: 89.00},
+        {nome: 'Camisa Dry Fit (M)', preco: 55.00}
+    ];
 
-    // Tenta carregar o histórico de várias formas para não perder dados
     function carregarDados() {
         try {
             const salvo = localStorage.getItem('vendas_toca') || localStorage.getItem('vendas_pdv');
             historicoVendas = salvo ? JSON.parse(salvo) : [];
             if(!Array.isArray(historicoVendas)) historicoVendas = [];
         } catch(e) {
-            console.error("Erro ao carregar dados", e);
             historicoVendas = [];
         }
     }
 
     window.onload = () => {
         carregarDados();
+        renderCatalogo();
         renderHistorico();
     };
 
+    function renderCatalogo() {
+        const corpo = document.getElementById("corpo-catalogo");
+        corpo.innerHTML = catalogo.map((prod, index) => `
+            <tr>
+                <td>${prod.nome}</td>
+                <td>R$ ${prod.preco.toFixed(2)}</td>
+                <td>
+                    <button class="btn-add" onclick="add('${prod.nome}', ${prod.preco})">+</button>
+                    <button class="btn-del-prod" onclick="excluirProduto(${index})">🗑️</button>
+                </td>
+            </tr>
+        `).join('');
+        localStorage.setItem('catalogo_toca', JSON.stringify(catalogo));
+    }
+
+    function cadastrarProduto() {
+        const nome = document.getElementById("novo-nome").value;
+        const preco = parseFloat(document.getElementById("novo-preco").value);
+        if(!nome || isNaN(preco)) return alert("Preencha nome e preço corretamente!");
+        catalogo.push({nome, preco});
+        document.getElementById("novo-nome").value = "";
+        document.getElementById("novo-preco").value = "";
+        renderCatalogo();
+    }
+
+    function excluirProduto(index) {
+        if(confirm("Excluir este produto do catálogo?")) {
+            catalogo.splice(index, 1);
+            renderCatalogo();
+        }
+    }
+
     function filtrarProdutos() {
         let input = document.getElementById("busca-prod").value.toLowerCase();
-        let rows = document.querySelectorAll("#tabela-produtos tbody tr");
+        let rows = document.querySelectorAll("#corpo-catalogo tr");
         rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
     }
 
@@ -199,7 +242,6 @@
         let somaTotal = 0;
         corpo.innerHTML = "";
 
-        // Filtro robusto que aceita dados antigos e novos
         const filtradas = historicoVendas.filter(v => {
             if (!v) return false;
             const itensTxt = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' ').toLowerCase() : String(v.itens).toLowerCase();
