@@ -8,6 +8,20 @@
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
         
+        /* Estilo do Cabeçalho com Logo */
+        .header-logo {
+            background: #fff;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            border-bottom: 2px solid #d32f2f;
+            margin-bottom: 10px;
+        }
+        .header-logo img {
+            height: 80px; /* Ajuste a altura conforme desejar */
+            margin-right: 20px;
+        }
+
         .main-container { display: flex; width: 100%; min-height: 60vh; }
         .produtos { flex: 2; padding: 20px; border-right: 2px solid #ddd; background: #f9f9f9; }
         .sacola { width: 400px; padding: 20px; background: white; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
@@ -35,33 +49,15 @@
         .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
         
-        .admin-catalogo { background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
-        .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; }
-
         #campo-parcelas { display: none; }
     </style>
 </head>
 <body>
 
-<div class="main-container">
-    <div class="produtos">
-        <h2>Catálogo</h2>
-        
-        <div class="admin-catalogo">
-            <input type="text" id="novo-nome" placeholder="Nome do Produto" style="margin-bottom:0">
-            <input type="number" id="novo-preco" placeholder="R$ 0.00" style="margin-bottom:0; width: 120px;">
-            <button class="btn-add" onclick="cadastrarProduto()">+ Cadastrar</button>
-        </div>
-
-        <input type="text" id="busca-prod" onkeyup="filtrarProdutos()" placeholder="🔎 Buscar no catálogo...">
-        <table id="tabela-produtos">
-            <thead>
-                <tr><th>Produto</th><th>Preço</th><th>Ações</th></tr>
-            </thead>
-            <tbody id="corpo-catalogo">
-                </tbody>
-        </table>
-    </div>
+<div class="header-logo">
+    <img src="tocaa-removebg-preview.png" alt="Logo Toca do Atleta">
+    <h2 style="margin:0">Toca do Atleta - PDV</h2>
+</div>
 
     <div class="sacola">
         <h2>Sacola</h2>
@@ -316,3 +312,4 @@
 </script>
 </body>
 </html>
+
