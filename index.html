@@ -8,6 +8,22 @@
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
         
+        /* Cabeçalho do Sistema */
+        .header-logo {
+            background: #fff;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-bottom: 3px solid #d32f2f;
+            margin-bottom: 10px;
+        }
+        .header-logo img {
+            height: 100px;
+            margin-bottom: 5px;
+        }
+
         .main-container { display: flex; width: 100%; min-height: 60vh; }
         .produtos { flex: 2; padding: 20px; border-right: 2px solid #ddd; background: #f9f9f9; }
         .sacola { width: 400px; padding: 20px; background: white; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
@@ -44,16 +60,19 @@
 </head>
 <body>
 
+<div class="header-logo">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOEAAADhCAMAAAAJbSJIAAAAbFBMVEX///8AAAD8/Pz4+Pj19fXw8PDm5ubf39/X19fR0dHLy8vFxcXAwMC8vLyyso6tra2np6eioqKbm5uWlpZwcHBsrW6Hh4eDg4N+fnp6enp2dnZ0dHRxcXFubm5qampoaGhmZmZkZGRhYWFoaGgm9C+OAAAFVUlEQVR4nO2daVviMBAARW6V9S7IqSAIev//P9u0pXNf09CZnSST7/Mhhz6SNDOZpInZTCY7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7Ozs7OztbiSInp8fHx8fHx8fHx8fH/0nUhfPz8/Pz8/Pz8/Pz89+A89HlR7uKzX8CshA9R73C5v8K3DnqFe79L6DeUa/w7v8ClI7+L383IAt79CsgC6sXmYXVv8XNwurNAnpZvVpALyvOAvSyzAnpZfU6Ar2segH9rvpA9LvqBvS7Cgfov67EAfqvq7CAr7XvA/qv696fXtc9YPDWng/ov/V9QH/rvg/ovvV9QL/X3v0A8NdqFfB3rVXA37XvA7pve38Aum+99/6V3nt/XmN+AK7V58G6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6C6674LoLrrvguguuu+C6S68L78fHx8fHx8fHx8fHx/+Z9Qf/f6S2FkL7tAAAAABJRU5ErkJggg==" alt="Logo Toca do Atleta">
+    <h2 style="margin:0">Toca do Atleta - PDV</h2>
+</div>
+
 <div class="main-container">
     <div class="produtos">
-        <h2>Catálogo Toca Do Atleta</h2>
-        
+        <h2>Catálogo</h2>
         <div class="admin-catalogo">
             <input type="text" id="novo-nome" placeholder="Nome do Produto" style="margin-bottom:0">
             <input type="number" id="novo-preco" placeholder="R$ 0.00" style="margin-bottom:0; width: 120px;">
             <button class="btn-add" onclick="cadastrarProduto()">+ Cadastrar</button>
         </div>
-
         <input type="text" id="busca-prod" onkeyup="filtrarProdutos()" placeholder="🔎 Buscar no catálogo...">
         <table id="tabela-produtos">
             <thead>
@@ -68,268 +87,4 @@
         <div id="lista-sacola"></div>
         <div class="total-box">
             <div style="display:flex; justify-content: space-between; font-weight: bold;">
-                <span>Subtotal:</span><span id="subtotal">R$ 0,00</span>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 10px;">
-                <div style="flex:1"><label style="font-size:11px">Desc %</label><input type="number" id="desc-porcent" value="0" oninput="calcularTudo()"></div>
-                <div style="flex:1"><label style="font-size:11px">Desc R$</label><input type="number" id="desc-reais" value="0" oninput="calcularTudo()"></div>
-            </div>
-            <input type="text" id="cpf-cliente" placeholder="CPF do Cliente">
-            <select id="metodo-pagamento" onchange="verificarParcelas()">
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Pix">Pix</option>
-                <option value="Cartão de Crédito">Cartão de Crédito</option>
-                <option value="Cartão de Débito">Cartão de Débito</option>
-            </select>
-            <div id="campo-parcelas">
-                <select id="parcelas">
-                    <option value="1">1x (À vista)</option>
-                    <option value="2">2x</option><option value="3">3x</option><option value="4">4x</option>
-                    <option value="5">5x</option><option value="6">6x</option><option value="7">7x</option>
-                    <option value="8">8x</option><option value="9">9x</option><option value="10">10x</option>
-                    <option value="11">11x</option><option value="12">12x</option>
-                </select>
-            </div>
-            <div class="val-final" id="total-final">R$ 0,00</div>
-            <button class="btn-finalizar" onclick="finalizarVenda()">FECHAR VENDA</button>
-        </div>
-    </div>
-</div>
-
-<div class="historico">
-    <div class="acoes-hist">
-        <div class="resumo-caixa">Caixa: <span id="total-acumulado">R$ 0,00</span></div>
-        <input type="text" id="busca-hist" onkeyup="renderHistorico()" placeholder="🔎 Buscar por CPF ou Produto..." style="width: 200px; margin-bottom:0">
-        <button class="btn-exportar" onclick="exportarCSV()">📥 Exportar CSV</button>
-        <button onclick="limparHistorico()" style="cursor:pointer; color:#d32f2f; background:none; border:none; text-decoration:underline;">Zerar</button>
-    </div>
-    <h3>📊 Histórico de Vendas</h3>
-    <table id="tabela-historico">
-        <thead>
-            <tr><th>Data/Hora</th><th>Itens</th><th>Pagamento / CPF</th><th>Total</th><th>Ação</th></tr>
-        </thead>
-        <tbody id="corpo-historico"></tbody>
-    </table>
-</div>
-
-<script>
-    let sacola = [];
-    let historicoVendas = [];
-    let catalogo = JSON.parse(localStorage.getItem('catalogo_toca')) || [
-        {nome: 'Whey Protein Max 900g', preco: 149.90},
-        {nome: 'Creatina Pura 300g', preco: 89.00},
-        {nome: 'Camisa Dry Fit (M)', preco: 55.00}
-    ];
-
-    function carregarDados() {
-        try {
-            const salvo = localStorage.getItem('vendas_toca') || localStorage.getItem('vendas_pdv');
-            historicoVendas = salvo ? JSON.parse(salvo) : [];
-            if(!Array.isArray(historicoVendas)) historicoVendas = [];
-        } catch(e) {
-            historicoVendas = [];
-        }
-    }
-
-    window.onload = () => {
-        carregarDados();
-        renderCatalogo();
-        renderHistorico();
-    };
-
-    function renderCatalogo() {
-        const corpo = document.getElementById("corpo-catalogo");
-        corpo.innerHTML = catalogo.map((prod, index) => `
-            <tr>
-                <td>${prod.nome}</td>
-                <td>R$ ${prod.preco.toFixed(2)}</td>
-                <td>
-                    <button class="btn-add" onclick="add('${prod.nome}', ${prod.preco})">+</button>
-                    <button class="btn-edit-prod" onclick="editarProduto(${index})">✏️</button>
-                    <button class="btn-del-prod" onclick="excluirProduto(${index})">🗑️</button>
-                </td>
-            </tr>
-        `).join('');
-        localStorage.setItem('catalogo_toca', JSON.stringify(catalogo));
-    }
-
-    function editarProduto(index) {
-        const prod = catalogo[index];
-        const novoNome = prompt("Editar nome do produto:", prod.nome);
-        const novoPreco = prompt("Editar preço do produto (use ponto para decimais):", prod.preco);
-
-        if (novoNome !== null && novoNome.trim() !== "") {
-            catalogo[index].nome = novoNome;
-        }
-        
-        if (novoPreco !== null && !isNaN(parseFloat(novoPreco))) {
-            catalogo[index].preco = parseFloat(novoPreco);
-        }
-
-        renderCatalogo();
-    }
-
-    function cadastrarProduto() {
-        const nome = document.getElementById("novo-nome").value;
-        const preco = parseFloat(document.getElementById("novo-preco").value);
-        if(!nome || isNaN(preco)) return alert("Preencha nome e preço corretamente!");
-        catalogo.push({nome, preco});
-        document.getElementById("novo-nome").value = "";
-        document.getElementById("novo-preco").value = "";
-        renderCatalogo();
-    }
-
-    function excluirProduto(index) {
-        if(confirm("Excluir este produto do catálogo?")) {
-            catalogo.splice(index, 1);
-            renderCatalogo();
-        }
-    }
-
-    function filtrarProdutos() {
-        let input = document.getElementById("busca-prod").value.toLowerCase();
-        let rows = document.querySelectorAll("#corpo-catalogo tr");
-        rows.forEach(tr => tr.style.display = tr.innerText.toLowerCase().includes(input) ? "" : "none");
-    }
-
-    function verificarParcelas() {
-        const metodo = document.getElementById("metodo-pagamento").value;
-        document.getElementById("campo-parcelas").style.display = (metodo === "Cartão de Crédito") ? "block" : "none";
-    }
-
-    function add(nome, preco) {
-        sacola.push({nome, preco: parseFloat(preco)});
-        renderSacola();
-    }
-
-    function removerDaSacola(index) {
-        sacola.splice(index, 1);
-        renderSacola();
-    }
-
-    function renderSacola() {
-        const lista = document.getElementById("lista-sacola");
-        lista.innerHTML = sacola.map((i, index) => `
-            <div class="item-sacola">
-                <span><b>${i.nome}</b></span> 
-                <span>R$ ${i.preco.toFixed(2)} <button class="btn-remover" onclick="removerDaSacola(${index})">x</button></span>
-            </div>
-        `).join('');
-        calcularTudo();
-    }
-
-    function calcularTudo() {
-        let sub = sacola.reduce((acc, i) => acc + i.preco, 0);
-        let descP = parseFloat(document.getElementById("desc-porcent").value) || 0;
-        let descR = parseFloat(document.getElementById("desc-reais").value) || 0;
-        let total = (sub - (sub * (descP / 100))) - descR;
-        if (total < 0) total = 0;
-        document.getElementById("subtotal").innerText = `R$ ${sub.toFixed(2)}`;
-        document.getElementById("total-final").innerText = `R$ ${total.toFixed(2)}`;
-        return { sub, total, descP, descR };
-    }
-
-    function finalizarVenda() {
-        if(sacola.length === 0) return alert("Sacola vazia!");
-        const valores = calcularTudo();
-        const metodo = document.getElementById("metodo-pagamento").value;
-        const parcelas = (metodo === "Cartão de Crédito") ? document.getElementById("parcelas").value : "1";
-        const cpf = document.getElementById("cpf-cliente").value || "N/A";
-        const dataHora = new Date().toLocaleString('pt-BR');
-
-        historicoVendas.push({ 
-            dataHora, itens: [...sacola], total: valores.total, 
-            subtotal: valores.sub, descP: valores.descP, descR: valores.descR,
-            metodo, parcelas, cpf 
-        });
-        
-        localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
-        sacola = [];
-        document.getElementById("cpf-cliente").value = "";
-        document.getElementById("desc-porcent").value = 0;
-        document.getElementById("desc-reais").value = 0;
-        renderSacola();
-        renderHistorico();
-        alert("Venda Salva!");
-    }
-
-    function renderHistorico() {
-        const corpo = document.getElementById("corpo-historico");
-        const busca = document.getElementById("busca-hist").value.toLowerCase();
-        let somaTotal = 0;
-        corpo.innerHTML = "";
-
-        const filtradas = historicoVendas.filter(v => {
-            if (!v) return false;
-            const itensTxt = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' ').toLowerCase() : String(v.itens).toLowerCase();
-            const cpfTxt = (v.cpf || "N/A").toLowerCase();
-            return cpfTxt.includes(busca) || itensTxt.includes(busca);
-        });
-
-        [...filtradas].reverse().forEach((v) => {
-            const totalVenda = parseFloat(v.total || 0);
-            somaTotal += totalVenda;
-            let indexOriginal = historicoVendas.indexOf(v);
-            
-            let tr = document.createElement("tr");
-            const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>i.nome).join(', ') : v.itens;
-            
-            tr.innerHTML = `
-                <td style="font-size:11px">${v.dataHora}</td>
-                <td style="font-size:11px">${listaItens}</td>
-                <td>
-                    <small>CPF: ${v.cpf || 'N/A'}</small>
-                    <span class="tag-pagamento">${v.metodo || 'Outro'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</span>
-                </td>
-                <td><b>R$ ${totalVenda.toFixed(2)}</b></td>
-                <td><button class="btn-recibo-hist" onclick="gerarRecibo(${indexOriginal})">Recibo</button></td>
-            `;
-            corpo.appendChild(tr);
-        });
-        document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
-    }
-
-    function gerarRecibo(index) {
-        const v = historicoVendas[index];
-        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : `<p>${v.itens}</p>`;
-        
-        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
-        janelaRecibo.document.write(`
-            <html><body style="font-family:monospace;padding:20px;">
-            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
-            <hr>
-            ${listaItens}
-            <hr>
-            <p><b>TOTAL: R$ ${parseFloat(v.total).toFixed(2)}</b></p>
-            <p>Pgto: ${v.metodo || 'N/A'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
-            <p>CPF: ${v.cpf || 'N/A'}</p>
-            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
-            </body></html>
-        `);
-        janelaRecibo.document.close();
-    }
-
-    function exportarCSV() {
-        if(historicoVendas.length === 0) return alert("Sem vendas para exportar!");
-        let csv = "\ufeffData;Itens;Pagamento;CPF;Total\n";
-        historicoVendas.forEach(v => {
-            const itensStr = Array.isArray(v.itens) ? v.itens.map(i => i.nome).join(' | ') : v.itens;
-            csv += `${v.dataHora};${itensStr};${v.metodo || 'N/A'};${v.cpf || 'N/A'};${parseFloat(v.total).toFixed(2).replace('.', ',')}\n`;
-        });
-        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement("a");
-        link.href = URL.createObjectURL(blob);
-        link.download = "relatorio_vendas_toca.csv";
-        link.click();
-    }
-
-    function limparHistorico() {
-        if(confirm("Isso apagará todas as vendas. Confirma?")) {
-            localStorage.removeItem('vendas_toca');
-            historicoVendas = [];
-            renderHistorico();
-        }
-    }
-</script>
-</body>
-</html>
+                <span>Subtotal:</span><span id="subtotal">R$ 0,
