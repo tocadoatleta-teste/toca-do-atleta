@@ -289,22 +289,71 @@
         document.getElementById("total-acumulado").innerText = `R$ ${somaTotal.toFixed(2)}`;
     }
 
+    // --- NOVA FUNÇÃO DE IMPRESSÃO FORMATADA ---
     function gerarRecibo(index) {
         const v = historicoVendas[index];
-        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : `<p>${v.itens}</p>`;
+        const itensHtml = Array.isArray(v.itens) 
+            ? v.itens.map(i => `<div style="display:flex; justify-content:space-between;"><span>${i.nome}</span> <span>${i.preco.toFixed(2)}</span></div>`).join('') 
+            : `<div>${v.itens}</div>`;
         
-        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
+        const totalDesc = (v.subtotal - v.total).toFixed(2);
+
+        const janelaRecibo = window.open('', '_blank', 'width=300,height=600');
         janelaRecibo.document.write(`
-            <html><body style="font-family:monospace;padding:20px;">
-            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
-            <hr>
-            ${listaItens}
-            <hr>
-            <p><b>TOTAL: R$ ${parseFloat(v.total).toFixed(2)}</b></p>
-            <p>Pgto: ${v.metodo || 'N/A'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
-            <p>CPF: ${v.cpf || 'N/A'}</p>
-            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
-            </body></html>
+            <html>
+            <head>
+                <style>
+                    @page { margin: 0; }
+                    body { 
+                        font-family: 'Courier New', Courier, monospace; 
+                        width: 72mm; 
+                        margin: 0 auto; 
+                        padding: 10px; 
+                        font-size: 12px; 
+                        color: #000;
+                    }
+                    .text-center { text-align: center; }
+                    .header { margin-bottom: 10px; border-bottom: 1px dashed #000; padding-bottom: 5px; }
+                    .footer { margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px; text-align: center; font-size: 10px; }
+                    .linha-total { font-weight: bold; font-size: 14px; margin-top: 5px; border-top: 1px solid #000; padding-top: 2px; }
+                    .flex { display: flex; justify-content: space-between; }
+                </style>
+            </head>
+            <body>
+                <div class="header text-center">
+                    <strong style="font-size: 16px;">TOCA DO ATLETA</strong><br>
+                    <span>RECIBO DE VENDA</span><br>
+                    <span>${v.dataHora}</span>
+                </div>
+                
+                <div style="margin-bottom: 5px;"><strong>ITENS:</strong></div>
+                ${itensHtml}
+                
+                <div style="margin-top: 10px; border-top: 1px dashed #000; padding-top: 5px;">
+                    <div class="flex"><span>Subtotal:</span> <span>R$ ${parseFloat(v.subtotal).toFixed(2)}</span></div>
+                    <div class="flex"><span>Desconto:</span> <span>R$ ${totalDesc}</span></div>
+                    <div class="flex linha-total"><span>TOTAL:</span> <span>R$ ${parseFloat(v.total).toFixed(2)}</span></div>
+                </div>
+
+                <div style="margin-top: 10px;">
+                    <div><strong>PAGAMENTO:</strong></div>
+                    <div>${v.metodo || 'N/A'} ${v.metodo === 'Cartão de Crédito' ? (v.parcelas || 1) + 'x' : ''}</div>
+                    <div style="margin-top: 5px;"><strong>CLIENTE:</strong> CPF ${v.cpf || 'N/A'}</div>
+                </div>
+
+                <div class="footer">
+                    OBRIGADO PELA PREFERÊNCIA!<br>
+                    Siga-nos no Instagram @tocadoatleta
+                </div>
+
+                <script>
+                    window.onload = function() {
+                        window.print();
+                        setTimeout(() => { window.close(); }, 500);
+                    }
+                <\/script>
+            </body>
+            </html>
         `);
         janelaRecibo.document.close();
     }
