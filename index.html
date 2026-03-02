@@ -7,15 +7,15 @@
     <style>
         * { box-sizing: border-box; }
         body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; }
-        
+
         .main-container { display: flex; width: 100%; min-height: 60vh; }
         .produtos { flex: 2; padding: 20px; border-right: 2px solid #ddd; background: #f9f9f9; }
         .sacola { width: 400px; padding: 20px; background: white; box-shadow: -2px 0 5px rgba(0,0,0,0.05); }
         .historico { padding: 20px; background: #fff; border-top: 4px solid #d32f2f; min-height: 40vh; }
-        
+
         h2, h3 { color: #d32f2f; margin-top: 0; }
         input, select { padding: 10px; border: 1px solid #ccc; border-radius: 5px; margin-bottom: 10px; font-size: 14px; width: 100%; }
-        
+
         table { width: 100%; border-collapse: collapse; background: white; margin-bottom: 20px; }
         th, td { padding: 10px; border-bottom: 1px solid #eee; text-align: left; }
         th { background: #d32f2f; color: white; position: sticky; top: 0; z-index: 5; }
@@ -24,7 +24,7 @@
         .btn-finalizar { background: #d32f2f; color: white; border: none; padding: 15px; border-radius: 5px; cursor: pointer; font-size: 18px; font-weight: bold; margin-top: 10px; width: 100%; }
         .btn-recibo-hist { background: #ffa000; color: white; border: none; padding: 5px 10px; border-radius: 3px; cursor: pointer; font-size: 11px; font-weight: bold; }
         .btn-exportar { background: #1976d2; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; }
-        
+
         .item-sacola { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px dashed #ccc; }
         .btn-remover { background: #ff5252; color: white; border: none; border-radius: 3px; cursor: pointer; padding: 4px 10px; }
 
@@ -34,7 +34,7 @@
         .acoes-hist { display: flex; gap: 10px; float: right; align-items: center; flex-wrap: wrap; }
         .resumo-caixa { background: #e8f5e9; padding: 8px 15px; border-radius: 5px; font-weight: bold; color: #2e7d32; border: 1px solid #2e7d32; }
         .tag-pagamento { font-size: 10px; padding: 2px 5px; border-radius: 3px; background: #eee; color: #666; font-weight: bold; display: block; margin-top: 2px; }
-        
+
         .admin-catalogo { background: #eee; padding: 10px; border-radius: 5px; margin-bottom: 20px; display: flex; gap: 10px; }
         .btn-del-prod { color: #d32f2f; border: none; background: none; cursor: pointer; font-weight: bold; font-size: 18px; }
         .btn-edit-prod { color: #1976d2; border: none; background: none; cursor: pointer; font-weight: bold; font-size: 18px; margin-right: 5px; }
@@ -47,7 +47,7 @@
 <div class="main-container">
     <div class="produtos">
         <h2>Catálogo Toca Do Atleta</h2>
-        
+
         <div class="admin-catalogo">
             <input type="text" id="novo-nome" placeholder="Nome do Produto" style="margin-bottom:0">
             <input type="number" id="novo-preco" placeholder="R$ 0.00" style="margin-bottom:0; width: 120px;">
@@ -118,27 +118,7 @@
     let catalogo = JSON.parse(localStorage.getItem('catalogo_toca')) || [
         {nome: 'Whey Protein Max 900g', preco: 149.90},
         {nome: 'Creatina Pura 300g', preco: 89.00},
-		{nome: 'Café Nespresso Cápsula', preco: 9.00},
-		{nome: 'Whey Concentrado Nutrata Sabores 900g', preco: 120.00},
-		{nome: 'Creatina NBoom', preco: 79.90},
-		{nome: 'Whey 100% New Millen 900g', preco: 149.90},
-		{nome: 'Whey A 900g', preco: 149.90},
-		{nome: 'Whey B 900g', preco: 149.90},
-		{nome: 'Whey C 900g', preco: 149.90},
-		{nome: 'Whey D 900g', preco: 149.90},
-		{nome: 'Whey E 900g', preco: 149.90},
-		{nome: 'Whey F 900g', preco: 149.90},
-		{nome: 'Whey G 900g', preco: 149.90},
-		{nome: 'Whey H 900g', preco: 149.90},
-		{nome: 'Whey I 900g', preco: 149.90},
-		{nome: 'Whey J 900g', preco: 149.90},
-		{nome: 'Whey K 900g', preco: 149.90},
-		{nome: 'Whey L 900g', preco: 149.90},
-		{nome: 'Whey M 900g', preco: 149.90},
-		{nome: 'Whey N 900g', preco: 149.90},
-		{nome: 'Whey O 900g', preco: 149.90},
-		{nome: 'Whey P 900g', preco: 149.90},
-		{nome: 'Whey Q 900g', preco: 149.90}.
+        {nome: 'Camisa Dry Fit (M)', preco: 55.00}
     ];
 
     function carregarDados() {
@@ -181,7 +161,7 @@
         if (novoNome !== null && novoNome.trim() !== "") {
             catalogo[index].nome = novoNome;
         }
-        
+
         if (novoPreco !== null && !isNaN(parseFloat(novoPreco))) {
             catalogo[index].preco = parseFloat(novoPreco);
         }
@@ -262,7 +242,7 @@
             subtotal: valores.sub, descP: valores.descP, descR: valores.descR,
             metodo, parcelas, cpf 
         });
-        
+
         localStorage.setItem('vendas_toca', JSON.stringify(historicoVendas));
         sacola = [];
         document.getElementById("cpf-cliente").value = "";
@@ -290,10 +270,10 @@
             const totalVenda = parseFloat(v.total || 0);
             somaTotal += totalVenda;
             let indexOriginal = historicoVendas.indexOf(v);
-            
+
             let tr = document.createElement("tr");
             const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>i.nome).join(', ') : v.itens;
-            
+
             tr.innerHTML = `
                 <td style="font-size:11px">${v.dataHora}</td>
                 <td style="font-size:11px">${listaItens}</td>
@@ -312,14 +292,26 @@
     // --- NOVA FUNÇÃO DE IMPRESSÃO FORMATADA ---
     function gerarRecibo(index) {
         const v = historicoVendas[index];
+        const listaItens = Array.isArray(v.itens) ? v.itens.map(i=>`<p>${i.nome} - R$ ${i.preco.toFixed(2)}</p>`).join('') : `<p>${v.itens}</p>`;
         const itensHtml = Array.isArray(v.itens) 
             ? v.itens.map(i => `<div style="display:flex; justify-content:space-between;"><span>${i.nome}</span> <span>${i.preco.toFixed(2)}</span></div>`).join('') 
             : `<div>${v.itens}</div>`;
-        
+
+        const janelaRecibo = window.open('', '_blank', 'width=400,height=600');
         const totalDesc = (v.subtotal - v.total).toFixed(2);
 
         const janelaRecibo = window.open('', '_blank', 'width=300,height=600');
         janelaRecibo.document.write(`
+            <html><body style="font-family:monospace;padding:20px;">
+            <center><h3>TOCA DO ATLETA</h3><p>${v.dataHora}</p></center>
+            <hr>
+            ${listaItens}
+            <hr>
+            <p><b>TOTAL: R$ ${parseFloat(v.total).toFixed(2)}</b></p>
+            <p>Pgto: ${v.metodo || 'N/A'} ${v.metodo==='Cartão de Crédito'?(v.parcelas||1)+'x':''}</p>
+            <p>CPF: ${v.cpf || 'N/A'}</p>
+            <script>window.onload=function(){window.print();setTimeout(window.close,500);}<\/script>
+            </body></html>
             <html>
             <head>
                 <style>
@@ -402,4 +394,3 @@
 </script>
 </body>
 </html>
-
